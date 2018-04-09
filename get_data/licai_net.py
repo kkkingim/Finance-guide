@@ -24,42 +24,11 @@ def jdjj2(page):
     return infojson
 
 
-
 app = Flask(__name__)
 
 @app.route('/jd')
 def jd():
     return jsonify(jdjj())
-
-@app.route('/tb/jd')
-def tbjd():
-    ret = '<table border="1" width="100px">\n'
-    jsn = jdjj()
-
-    ret += "<tr>\n"
-    for i in jsn[0]:
-        try:
-            it = "<td>" + str(i) + "</td>\n"
-        except:
-            it = "<td>" + i.encode("utf-8") + "</td>\n"
-
-        ret += it
-    ret += "</tr>\n"
-
-
-    for itm in jsn:
-        ret += "<tr>\n"
-        for i in itm:
-            try:
-                it = "<td>" + str(itm[i]) + "</td>\n"
-            except:
-                it = "<td>" + itm[i].encode("utf-8") + "</td>\n"
-
-            ret += it
-        ret += "</tr>\n"
-    ret += "</table>\n"
-    return ret
-
 
 @app.route('/jd2/<int:p>')
 def jd2(p):
