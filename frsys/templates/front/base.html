@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> {% block title %}  {% endblock %} </title>
+
+    <style>
+        * {
+            text-decoration: None;
+            color: aliceblue;
+        }
+
+        body {
+            background: gray;
+        }
+
+        .header {
+            overflow: hidden;
+        }
+
+        .header ul li {
+            float: left;
+            padding: 10px 30px;
+            color: aliceblue;
+        }
+        input{
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="header">
+    <ul>
+        <li><a href="{{ url_for("front.index") }}">主页</a></li>
+        <li><a href="{{ url_for("front.reg") }}">注册</a></li>
+        <li><a href="{{ url_for("front.login") }}">登录</a></li>
+        <li><a href="{{ url_for("front.setting") }}">设置</a></li>
+
+        <li><a href="{{ url_for("common.admin_index") }}">Admin</a></li>
+    </ul>
+</nav>
+
+{% block body %}
+
+{% endblock %}
+
+</body>
+</html>

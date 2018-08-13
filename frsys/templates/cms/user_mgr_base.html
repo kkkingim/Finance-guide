@@ -1,0 +1,90 @@
+{% extends "cms/base.html" %}
+
+{% block showblock %}
+    <script type="text/javascript">
+        jQuery(".sideMenu").slide({
+            titCell: "h3", //鼠标触发对象
+            targetCell: "ul", //与titCell一一对应，第n个titCell控制第n个targetCell的显示隐藏
+            effect: "slideDown", //targetCell下拉效果
+            delayTime: 300, //效果时间
+            triggerTime: 50, //鼠标延迟触发时间（默认150）
+            defaultPlay: true,//默认是否执行效果（默认true）
+            returnDefault: true, //鼠标从.sideMen移走后返回默认状态（默认false）
+            trigger: "mousedown",
+            defaultIndex: 1,
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="admin-biaogelist">
+
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-users">
+                {% block func_name %}{% endblock %}
+            </ul>
+
+            {% block search_input %}
+                <ul>
+                    <form action="">
+                        <input type="text" name="wd" placeholder="用户名.."
+                               style="font-size: 16px;padding: 3px 0;margin-bottom: 10px">
+                        <input class="am-btn am-btn-default" type="submit" value="搜索"
+                               style="font-size: 16px;padding: 3px 5px;margin-bottom: 10px">
+                    </form>
+                </ul>
+            {% endblock %}
+
+
+            <dl class="am-icon-home" style="float: right;">
+                当前位置： 首页 >
+                <a href="">用户管理</a>
+            </dl>
+
+
+        </div>
+
+
+        <form class="am-form am-g">
+            {% block user_table %}
+
+            {% endblock %}
+
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="add_user am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                </button>
+                <button type="button" class="del_users am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除
+                </button>
+            </div>
+
+
+
+            {% block pagefooter %}
+
+            {% endblock %}
+            <tr></tr>
+
+
+        </form>
+
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+
+    {% block popups %}
+        {#    common funcs#}
+
+        <script language="JavaScript">
+            $(".checkall").on("click", function () {
+
+                $("#user_list :checkbox[class!=checkall]").each(function () {
+                    $(this).prop("checked", $(".checkall").prop('checked'));
+                });
+            })
+        </script>
+    {% endblock %}
+
+
+{% endblock %}

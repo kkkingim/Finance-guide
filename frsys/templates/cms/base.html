@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}
+        CMS 后台管理系统
+    {% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for("static", filename="cms/css/amazeui.min.css") }}"/>
+    <link rel="stylesheet" href="{{ url_for("static", filename="cms/css/admin.css") }}">
+
+    <script src="{{ url_for("static", filename="cms/js/jquery.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="cms/js/app.js") }}"></script>
+
+    <style>
+        @font-face {
+            font-family: FontAwesome;
+            src: url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.eot") }});
+            src: url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.eot") }}) format('embedded-opentype'), url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.woff2") }}) format('woff2'), url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.woff") }}) format('woff'), url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.ttf") }}) format('truetype'), url({{ url_for("static", filename="cms/fonts/fontawesome-webfont.svg") }}) format('svg');
+            font-weight: 400;
+            font-style: normal
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="am-cf admin-main">
+
+    <div class="nav-navicon admin-main admin-sidebar">
+
+
+        <div class="sideMenu" style="color:#aeb2b7; margin: 20px 0 20px 0;">
+            <a href="{{ url_for("cms.index") }}" style="color: white"><span class="am-icon-dashboard"></span></a>
+            欢迎系统管理员：{{ g.cms_user.username }}
+        </div>
+
+        <div class="sideMenu">
+            <h3 class="am-icon-flag"><em></em> <a> 数据管理</a></h3>
+            <ul>
+                <li><a href="{{ url_for("cms.products_mgr") }}">数据列表管理</a></li>
+                <li><a href="{{ url_for("cms.user_grade_mgr") }}">用户评价管理</a></li>
+            </ul>
+
+            <h3 class="am-icon-users"><em></em> <a> 用户管理</a></h3>
+            <ul>
+                <li><a href="{{ url_for("cms.user_mgr") }}">前台用户管理</a></li>
+                <li><a href="{{ url_for("cms.cms_user_mgr") }}">CMS用户管理</a></li>
+            </ul>
+            <h3 class="am-icon-gears"><em></em> <a> 系统设置</a></h3>
+            <ul>
+{#                <li><a href="{{ url_for("cms.cms_setting") }}">设置</a></li>#}
+                <li><a href="{{ url_for("cms.logout") }}">注销</a></li>
+            </ul>
+        </div>
+        <!-- sideMenu End -->
+        {% block showblock %}
+            <script type="text/javascript">
+                jQuery(".sideMenu").slide({
+                    titCell: "h3", //鼠标触发对象
+                    targetCell: "ul", //与titCell一一对应，第n个titCell控制第n个targetCell的显示隐藏
+                    effect: "slideDown", //targetCell下拉效果
+                    delayTime: 300, //效果时间
+                    triggerTime: 50, //鼠标延迟触发时间（默认150）
+                    defaultPlay: false,//默认是否执行效果（默认true）
+                    returnDefault: true, //鼠标从.sideMen移走后返回默认状态（默认false）
+                    trigger: "mousedown",
+                    defaultIndex: 0,
+                });
+            </script>
+        {% endblock %}
+
+    </div>
+
+
+    <div class=" admin-content">
+        <div class="admin">
+            {% block body %}
+
+            {% endblock %}
+        </div>
+    </div>
+
+
+</div>
+
+
+{% block footer %}
+
+{% endblock %}
+
+<script src="{{ url_for("static", filename="cms/js/amazeui.min.js") }}"></script>
+</body>
+</html>

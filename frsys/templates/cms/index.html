@@ -1,0 +1,27 @@
+{% extends "cms/base.html" %}
+{% block body %}
+
+    <div class="admin-index">
+        <dl data-am-scrollspy="{animation: 'slide-top', delay: 100}">
+            <dt class="qs"><i class="am-icon-users"></i></dt>
+            <dd>{{ user_amount|default(0) }}</dd>
+            <dd class="f12">用户数量</dd>
+        </dl>
+        <dl data-am-scrollspy="{animation: 'slide-top', delay: 100}">
+            <dt class="qs"><i class="am-icon-database"></i></dt>
+            <dd>{{ data_amount|default(0) }}</dd>
+            <dd class="f12">数据数量</dd>
+        </dl>
+        <dl data-am-scrollspy="{animation: 'slide-top', delay: 100}">
+            <dt class="qs"><i class="am-icon-thumbs-up"></i></dt>
+            <dd>{{ comment|default(0) }}</dd>
+            <dd class="f12">评价数量</dd>
+        </dl>
+        <dl data-am-scrollspy="{animation: 'slide-top', delay: 100}">
+            <dt class="qs"><i class="am-icon-clock-o"></i></dt>
+            <dd>{{ run_time|default("00:00") }}</dd>
+            <dd class="f12">运行时间</dd>
+        </dl>
+    </div>
+
+{% endblock %}

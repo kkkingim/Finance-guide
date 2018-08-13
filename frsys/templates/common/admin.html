@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin </title>
+
+    <style>
+        * {
+            text-decoration: None;
+            color: aliceblue;
+        }
+
+        body {
+            background: gray;
+        }
+
+        .header ul li {
+            padding: 10px 30px;
+            color: aliceblue;
+            font-size: 30px;
+        }
+        input{
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="left">
+    <ul>
+        <li><a href="{{ url_for("front.index") }}">主页</a></li>
+        <li><a href="{{ url_for("front.reg") }}">注册</a></li>
+        <li><a href="{{ url_for("front.login") }}">登录</a></li>
+        <li><a href="{{ url_for("front.setting") }}">设置</a></li>
+        <li><a href="{{ url_for("common.add_sth") }}">顯示數據(從文件)</a></li>
+        <li><a href="{{ url_for("common.show_list") }}">顯示列表</a></li>
+
+
+    </ul>
+</nav>
+
+</body>
+</html>

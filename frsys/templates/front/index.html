@@ -1,0 +1,15 @@
+{% extends "front/base.html" %}
+
+{% block title %}
+    主页
+{% endblock %}
+
+{% block body %}
+    {% if state %}
+        <h1>{{ state }}</h1>
+    {% endif %}
+
+    {% if login_flag %}
+        <h2><a href="{{ url_for('front.logout') }}">登出</a></h2>
+    {% endif %}
+{% endblock %}

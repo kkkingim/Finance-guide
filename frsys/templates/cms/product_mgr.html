@@ -1,0 +1,434 @@
+{% extends "cms/base.html" %}
+
+
+{% block showblock %}
+    <script type="text/javascript">
+        jQuery(".sideMenu").slide({
+            titCell: "h3", //鼠标触发对象
+            targetCell: "ul", //与titCell一一对应，第n个titCell控制第n个targetCell的显示隐藏
+            effect: "slideDown", //targetCell下拉效果
+            delayTime: 300, //效果时间
+            triggerTime: 50, //鼠标延迟触发时间（默认150）
+            defaultPlay: true,//默认是否执行效果（默认true）
+            returnDefault: false, //鼠标从.sideMen移走后返回默认状态（默认false）
+            trigger: "mousedown",
+            defaultIndex: 0,
+        });
+    </script>
+{% endblock %}
+
+
+{% block body %}
+    <div class="admin-biaogelist">
+
+        <div class="listbiaoti am-cf">
+            <ul class="am-icon-database">
+                {% block func_name %}产品数据列表{% endblock %}
+            </ul>
+
+            <ul>
+                <form action="">
+                    <input type="text" name="wd" placeholder="代码/简称.."
+                           style="font-size: 16px;padding: 3px 0;margin-bottom: 10px">
+                    <input class="am-btn am-btn-default" type="submit" value="搜索"
+                           style="font-size: 16px;padding: 3px 5px;margin-bottom: 10px">
+                </form>
+            </ul>
+
+
+            <dl class="am-icon-home" style="float: right;">
+                当前位置： 首页 >
+                <a href="">数据列表</a>
+            </dl>
+
+
+        </div>
+
+
+        <form class="am-form am-g">
+            {% block product_table %}
+                {% macro table_row(id, name, amt, price, last_price, pe, total_inc) %}
+                    <tr>
+                        <td><input type="checkbox"/></td>
+
+                        <td class="table-id">{{ id }}</td>
+                        <td>{{ name }}</td>
+                        <td>{{ amt }}</td>
+                        <td>{{ price }}</td>
+                        <td>{{ last_price }}</td>
+                        <td>{{ pe }}</td>
+                        <td>{{ total_inc }}</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button"
+                                            class="update_info am-btn am-btn-default am-btn-xs am-text-secondary am-round">
+                                        <span class="am-icon-pencil-square-o" title="修改信息"></span>
+                                    </button>
+
+                                    <button type="button"
+                                            class="del_product am-btn am-btn-default am-btn-xs am-text-danger am-round">
+                                        <span class="am-icon-trash-o" title="删除产品"></span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endmacro %}
+                {% if wd %}
+                    <h1>"{{ wd }}" 的当前搜索结果</h1>
+                {% endif %}
+
+                <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped"
+                       id="product_list">
+                    <thead>
+                    <tr class="am-success">
+                        <th class="table-check"><input class="checkall" type="checkbox"/></th>
+
+                        <th class="table-id" width="250px">股票代码</th>
+                        <th class="table-title">股票简称</th>
+                        <th class="table-type">发行总数(万股)</th>
+                        <th class="table-author am-hide-sm-only">发行价格</th>
+                        <th class="table-author am-hide-sm-only">最新价</th>
+                        <th class="table-author am-hide-sm-only">发行市盈率</th>
+                        <th class="table-author am-hide-sm-only">总涨幅</th>
+                        <th width="90px" class="table-set">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        {{ table_row(product.id, product.name, product.amount, product.price, product.last_price, product.PE_ratio, product.total_increase) }}
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+
+
+
+            {% endblock %}
+
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="add_product am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                </button>
+                <button type="button" class="del_products am-btn am-btn-default"><span class="am-icon-trash-o"></span>
+                    删除
+                </button>
+            </div>
+
+
+
+            {% block pagefooter %}
+                {% macro gen_page_footer(url) %}
+                    <ul class="am-pagination am-fr">
+                        {% set enda = "" %}
+                        {% if wd %}
+                            {% set enda = "&wd={}".format(wd) %}
+                        {% endif %}
+
+                        {% if current_page == 1 %}
+                            <li class="am-disabled"><a>«</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for(url, page= current_page - 1 ) + enda }}">«</a></li>
+                        {% endif %}
+
+
+                        {% if current_page < 3 or last_page <= 5 %}
+                            {% set list = [1,2,3,4,5] %}
+                        {% elif current_page > last_page - 2 %}
+                            {% set list = range(last_page - 4, last_page + 1) %}
+                        {% else %}
+                            {% set list = range(current_page - 2, current_page + 3) %}
+                        {% endif %}
+
+
+                        {% for p in list %}
+                            {% if p == current_page or p > last_page %}
+                                <li class="am-disabled"><a>{{ p }}</a></li>
+                            {% else %}
+                                <li><a href="{{ url_for(url, page= p )  + enda }}">{{ p }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+
+                        {% if current_page == last_page %}
+                            <li class="am-disabled"><a>»</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for(url, page= current_page + 1 )  + enda }}">»</a></li>
+                        {% endif %}
+                    </ul>
+                {% endmacro %}
+
+
+                {{ gen_page_footer("cms.products_mgr") }}
+
+            {% endblock %}
+            <tr></tr>
+
+
+        </form>
+
+
+    </div>
+
+{% endblock %}
+
+
+{% block footer %}
+
+    {#    del_product confirm#}
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">删除产品</div>
+            <div class="am-modal-bd">
+                你，确定要删除这个产品吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+        $(function () {
+            $('#product_list').find('.del_product').add('#doc-confirm-toggle').on('click', function () {
+                $('#my-confirm').modal({
+                    relatedTarget: this,
+                    onConfirm: function (options) {
+                        var $id = $(this.relatedTarget).parentsUntil('tr').parent().find("td:nth-child(2)");
+                        $.post("{{ url_for("cms.del_product") }}",
+                            {
+                                id: $id.text(),
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("删除成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("删除失败");
+                                }
+                            }
+                        );
+
+                    }
+                });
+            });
+        });
+    </script>
+
+    {#    update_info inputbox#}
+
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="update_info_input">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">修改信息</div>
+            <div class="am-modal-bd">
+                股票简称:
+                <input type="text" class="am-modal-prompt-input">
+                发行总数(万股):
+                <input type="text" class="am-modal-prompt-input">
+                发行价格:
+                <input type="text" class="am-modal-prompt-input">
+                最新价:
+                <input type="text" class="am-modal-prompt-input">
+                发行市盈率:
+                <input type="text" class="am-modal-prompt-input">
+                总涨幅:
+                <input type="text" class="am-modal-prompt-input">
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>修改</span>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+        $(function () {
+
+            $('.update_info').on('click', function (e) {
+                var $id = $(this).parentsUntil('tr').parent().find("td:nth-child(2)");
+
+                var $a1 = $id.next();
+                var $a2 = $a1.next();
+                var $a3 = $a2.next();
+                var $a4 = $a3.next();
+                var $a5 = $a4.next();
+                var $a6 = $a5.next();
+
+
+                var $ips = $('#update_info_input').find("input");
+
+                $($ips[0]).attr("value", $a1.text());
+                $($ips[1]).attr("value", $a2.text());
+                $($ips[2]).attr("value", $a3.text());
+                $($ips[3]).attr("value", $a4.text());
+                $($ips[4]).attr("value", $a5.text());
+                $($ips[5]).attr("value", $a6.text());
+
+
+                $('#update_info_input').modal({
+                    relatedTarget: this,
+                    onConfirm: function (e) {
+
+                        $.post("{{ url_for("cms.update_product_info") }}",
+                            {
+                                id: $id.text(),
+                                name: e.data[0],
+                                amt: e.data[1],
+                                price: e.data[2],
+                                last_price: e.data[3],
+                                pe: e.data[4],
+                                t_inc: e.data[5]
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("修改信息成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("修改失败");
+                                }
+                            }
+                        );
+                    }
+                });
+
+
+            });
+
+        });
+
+
+    </script>
+
+    {#    add_product inputbox#}
+
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="add_product_input">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">添加产品</div>
+            <div class="am-modal-bd" style="overflow: hidden">
+                <span style="float: left;width: 130px">股票代码:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">股票名称:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">发行总数(万股):</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">发行价格:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">最新价:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">发行市盈率:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+                <span style="float: left;width: 130px">总涨幅:</span>
+                <input type="text" style="width: 300px" class="am-modal-prompt-input">
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>添加</span>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+        $(function () {
+
+            $('.add_product').on('click', function () {
+
+                $('#add_product_input').modal({
+                    relatedTarget: this,
+                    onConfirm: function (e) {
+
+                        $.post("{{ url_for("cms.add_product") }}",
+                            {
+                                id : e.data[0],
+                                name : e.data[1],
+                                amt : e.data[2],
+                                price : e.data[3],
+                                last_price : e.data[4],
+                                pe : e.data[5],
+                                t_inc : e.data[6]
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("添加产品成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("添加失败," + data["error"]);
+                                }
+                            }
+                        );
+                    }
+                });
+
+            });
+
+        });
+
+
+    </script>
+
+    {#    del_select_products confirm#}
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="del-products-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">删除多个产品</div>
+            <div class="am-modal-bd">
+                你，确定要删除这些产品吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+        $(function () {
+            $('.del_products').add('#doc-confirm-toggle').on('click', function () {
+                $('#del-products-confirm').modal({
+                    relatedTarget: this,
+                    onConfirm: function (options) {
+                        var $id_list = [];
+                        $("#product_list :checkbox[class!=checkall]").each(function () {
+                            if ($(this).prop('checked') === true) {
+                                $id_list[$id_list.length] = $(this).parent().next("td").text();
+                            }
+
+                        });
+                        if ($id_list.length === 0){
+                            alert("请选择产品以删除!")
+                        }
+                        else{
+                            $.post("{{ url_for("cms.del_products") }}",
+                                {
+                                    id_list: $id_list.toString()
+                                },
+                                function (data) {
+                                    if (data["statue"] === true) {
+                                        alert("删除成功");
+                                        window.location.href=window.location.href;
+                                    }
+                                    else {
+                                        alert("删除失败");
+                                    }
+                                }
+                            );
+                        }
+
+                    }
+                });
+            });
+        });
+    </script>
+
+    {#    common funcs#}
+
+    <script language="JavaScript">
+        $(".checkall").on("click", function () {
+            $("#product_list :checkbox[class!=checkall]").each(function () {
+                $(this).prop("checked", $(".checkall").prop('checked'));
+            });
+        })
+    </script>
+
+{% endblock %}

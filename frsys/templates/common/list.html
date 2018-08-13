@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <th style="width: 100px">股票代碼</th>
+    <th style="width: 100px">股票簡稱</th>
+    <th style="width: 150px">發行總數(萬股)</th>
+    <th style="width: 100px">發行價格</th>
+    <th style="width: 100px">最新價</th>
+    <th style="width: 100px">發行市盈率</th>
+    <th style="width: 100px">總漲幅</th>
+    </thead>
+    <tbody style="text-align: center">
+    {% for pd in pds %}
+        <tr>
+            <td>{{ pd.id }}</td>
+            <td>{{ pd.name }}</td>
+            <td>{{ pd.amount }}</td>
+            <td>{{ pd.price }}</td>
+            <td>{{ pd.last_price }}</td>
+            <td>{{ pd.PE_ratio }}</td>
+            <td>{{ pd.total_increase }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        {% set current_page = (request.args.get("page")|int) %}
+        <td colspan="2">頁碼範圍: 0-{{ amt//10 }}</td>
+        <td>當前 : {{ current_page }}</td>
+        <td colspan="2">
+            <form action="">
+                <input type="text" style="width: 40px;" name="page">
+                <input type="submit" style="float:right;" value="GOTO">
+            </form>
+        </td>
+
+        {% if current_page < 1 %}
+            <td><a>上一頁</a></td>
+        {% else %}
+            <td><a href="{{ url_for("common.show_list", page= current_page - 1 ) }}">上一頁</a></td>
+        {% endif %}
+
+        {% if current_page >= amt//10 %}
+            <td><a>下一頁</a></td>
+        {% else %}
+            <td><a href="{{ url_for("common.show_list", page= current_page + 1 ) }}">下一頁</a></td>
+        {% endif %}
+
+
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

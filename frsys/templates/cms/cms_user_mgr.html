@@ -1,0 +1,307 @@
+{% extends "cms/user_mgr_base.html" %}
+
+
+{% block func_name %}
+    CMS用户管理
+{% endblock %}
+
+{% block user_table %}
+    {% macro table_row(id, username) %}
+        <tr>
+            <td><input type="checkbox"/></td>
+
+            <td class="table-id">{{ id }}</td>
+            <td>{{ username }}</td>
+            <td>
+                <div class="am-btn-toolbar">
+                    <div class="am-btn-group am-btn-group-xs">
+                        <button type="button" class="reset_p am-btn am-btn-default am-btn-xs am-text-success am-round">
+                            <span class="am-icon-eraser" title="重置密码"></span>
+                        </button>
+
+                        <button type="button" class="del_user am-btn am-btn-default am-btn-xs am-text-danger am-round">
+                            <span class="am-icon-trash-o" title="删除用户"></span>
+                        </button>
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% endmacro %}
+    {% if wd %}
+        <h1>"{{ wd }}" 的当前搜索结果</h1>
+    {% endif %}
+
+    <table class="am-table am-table-bordered am-table-radius am-table-striped" id="user_list">
+        <thead>
+        <tr class="am-success">
+            <th class="table-check"><input class="checkall" type="checkbox"/></th>
+
+            <th class="table-id" width="40%">ID</th>
+            <th class="table-title">用户名</th>
+            <th width="90px" class="table-set">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            {{ table_row(user.id, user.username) }}
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block pagefooter %}
+    {% macro gen_page_footer(url) %}
+        <ul class="am-pagination am-fr">
+            {% set enda = "" %}
+            {% if wd %}
+                {% set enda = "&wd={}".format(wd) %}
+            {% endif %}
+
+
+            {% if current_page == 1 %}
+                <li class="am-disabled"><a>«</a></li>
+            {% else %}
+                <li><a href="{{ url_for(url, page= current_page - 1 )  + enda }}">«</a></li>
+            {% endif %}
+
+
+            {% if current_page < 3 or last_page <= 5 %}
+                {% set list = [1,2,3,4,5] %}
+            {% elif current_page > last_page - 2 %}
+                {% set list = range(last_page - 4, last_page + 1) %}
+            {% else %}
+                {% set list = range(current_page - 2, current_page + 3) %}
+            {% endif %}
+
+
+            {% for p in list %}
+                {% if p == current_page or p > last_page %}
+                    <li class="am-disabled"><a>{{ p }}</a></li>
+                {% else %}
+                    <li><a href="{{ url_for(url, page= p )  + enda }}">{{ p }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+
+            {% if current_page == last_page %}
+                <li class="am-disabled"><a>»</a></li>
+            {% else %}
+                <li><a href="{{ url_for(url, page= current_page + 1 )  + enda }}">»</a></li>
+            {% endif %}
+        </ul>
+    {% endmacro %}
+    {{ gen_page_footer("cms.cms_user_mgr") }}
+{% endblock %}
+
+{% block popups %}
+
+    {#    del_user confirm#}
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">删除用户</div>
+            <div class="am-modal-bd">
+                你，确定要删除这个用户吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        $(function () {
+            $('#user_list').find('.del_user').add('#doc-confirm-toggle').on('click', function () {
+                $('#my-confirm').modal({
+                    relatedTarget: this,
+                    onConfirm: function (options) {
+                        var $user = $(this.relatedTarget).parentsUntil('tr').parent().find("td:nth-child(2)");
+                        $.post("{{ url_for("cms.del_cms_user") }}",
+                            {
+                                id: $user.text(),
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("删除成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("删除失败");
+                                }
+                            }
+                        );
+
+                    }
+                });
+            });
+        });
+    </script>
+
+    {#    reset_pwd inputbox#}
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="reset_pwd_input">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">重置密码</div>
+            <div class="am-modal-bd">
+                请输入新的密码:
+                <input type="text" class="am-modal-prompt-input">
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>重置</span>
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        $(function () {
+            $('.reset_p').on('click', function () {
+                $('#reset_pwd_input').modal({
+                    relatedTarget: this,
+                    onConfirm: function (e) {
+                        var $user = $(this.relatedTarget).parentsUntil('tr').parent().find("td:nth-child(2)");
+                        $.post("{{ url_for("cms.reset_cms_password") }}",
+                            {
+                                id: $user.text(),
+                                pwd: e.data
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("重置成功, 新密码为: " + e.data);
+                                    if (data["reload"] === true) {
+                                        window.location.href=window.location.href;
+                                    }
+                                }
+                                else {
+                                    alert("重置失败");
+                                }
+                            }
+                        );
+                    }
+                });
+            });
+        });
+    </script>
+
+    {#    add_user inputbox#}
+
+    <div class="am-modal am-modal-prompt" tabindex="-1" id="add_user_input">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">添加CMS用户</div>
+            <div class="am-modal-bd" style="overflow: hidden">
+                <span style="float: left;width: 100px">用户名:</span>
+                <input type="text" class="am-modal-prompt-input">
+                <span style="float: left;width: 100px">密码:</span>
+                <input type="password" class="am-modal-prompt-input">
+                <span style="float: left;width: 100px;height: 20px;"></span>
+                <input type="password" class="am-modal-prompt-input">
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>添加</span>
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        $(function () {
+
+            $('.add_user').on('click', function () {
+
+                $('#add_user_input').modal({
+                    relatedTarget: this,
+                    onConfirm: function (e) {
+
+                        $.post("{{ url_for("cms.add_cms_user") }}",
+                            {
+                                username: e.data[0],
+                                password: e.data[1],
+                                password_repeat: e.data[2]
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("添加用户成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("添加失败," + data["error"]);
+                                }
+                            }
+                        );
+                    }
+                });
+
+            });
+
+        });
+
+
+    </script>
+
+    {#    del_select_user confirm#}
+
+    <div class="am-modal am-modal-confirm" tabindex="-1" id="del-users-confirm">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">删除多个CMS用户</div>
+            <div class="am-modal-bd">
+                你，确定要删除这些用户吗？
+            </div>
+            <div class="am-modal-footer">
+                <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+                <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+            </div>
+        </div>
+    </div>
+
+    <script language="JavaScript">
+        $(function () {
+            $('.del_users').add('#doc-confirm-toggle').on('click', function () {
+                $('#del-users-confirm').modal({
+                    relatedTarget: this,
+                    onConfirm: function (options) {
+                        var $uid_list = [];
+                        $("#user_list :checkbox[class!=checkall]").each(function () {
+                            if ($(this).prop('checked') === true) {
+                                $uid_list[$uid_list.length] = $(this).parent().next("td").text();
+                            }
+
+                        });
+
+                        $.post("{{ url_for("cms.del_cms_users") }}",
+                            {
+                                uid_list: $uid_list.toString()
+                            },
+                            function (data) {
+                                if (data["statue"] === true) {
+                                    alert("删除成功");
+                                    window.location.href=window.location.href;
+                                }
+                                else {
+                                    alert("删除失败");
+                                }
+                            }
+                        );
+
+
+                    }
+                });
+            });
+        });
+    </script>
+
+    {{ super() }}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
