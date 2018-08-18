@@ -1,74 +1,107 @@
-#coding: utf-8
 import pymysql
-
-import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
-from pandas import DataFrame, Series
-from apps.models import db, Grade
-
-# 数据库取数据,输入参数为(产品ID, 用户ID, grade, 数据库表名), 输出产品-用户 评分表
-def get_mysql_grade():
-    data = DataFrame()
-    try:
-        for grade in Grade.query.all():
-            data.loc[grade.uid, grade.pid] = grade.grade
-    except Exception as e:
-        raise e
-    finally:
-        data.index.names = ['uid']
-        data.columns.names = ['pid']
-        return data.fillna(0)
-
-ratings = get_mysql_grade()
-centered_rating = ratings.apply(lambda x : x - x.mean(), axis=1)
+import numpy as np
+from pandas import DataFrame
+from scipy.stats import pearsonr
+import json
+import time
+import config
 
 
 
-# 求某用户对某产品的预测评分（基于物品）
-def get_sim_in_item(ratings, centered_rating, target_user, target_item):
-    # 取出评分二维表中目标用户已经评分的index
-    no_0_index = ratings[~ratings[int(target_user)].isin([0])].index
-    csim_list = []
-    for i in no_0_index:
-        #print(i)
-        csim_list.append(cosine_similarity(centered_rating.loc[i, :].values.reshape(1, -1),
-                                           centered_rating.loc[target_item, :].values.reshape(1, -1)).item())
-    new_ratings = pd.DataFrame({'similarity': csim_list, 'rating': ratings[target_user]}, index=no_0_index)
+from apps.models import Grade
 
-    #print(new_ratings)
+# 准备工作: 取数据,算相似度, 把二维表转成json文件存储
+def data_to_json():
+    config.GEN_STATUE = 1
 
-    # 得出某产品相对其他产品的相似度和评分表
-    top = new_ratings[new_ratings.similarity > 0].sort_values('similarity', ascending=False)
+    # 输入参数为(产品ID, 用户ID, grade, 数据库表名), 输出产品-用户 评分表
+    def get_mysql_grade():
+        uid2id = {}
+        nnum = 1000
+        data = DataFrame(dtype=np.int8)
+        grades = Grade.query.all()
+        try:
+            for grade in grades:
+                if grade.uid not in uid2id:
+                    nnum += 1
+                    if 'Vr-' in grade.uid:
+                        uid2id[grade.uid] = str(nnum)
+                    else:
+                        uid2id[grade.uid] = 'Vr-' + str(nnum)
+                uid = uid2id[grade.uid]
 
-    #print('---' + str(target_item) + '---')
-    #print(top)
+                data.loc[grade.pid, uid] = grade.grade
+        except Exception as e:
+            raise e
+        finally:
+            data.index.names = ['pid']
+            data.columns.names = ['uid']
+            data = data.fillna(0)
+            return data
 
-    top['multiple'] = top['rating'] * top['similarity']
-
-    # 通过加权平均求出某用户对某产品的预测评分
-    result = top['multiple'].sum() / top['similarity'].sum()
-
-    #print(result)
-    return result
-
-# 基于产品的协调过滤推荐
-def get_item_in_item(ratings, centered_rating, target_user, k):
-    # 取出评分二维表中目标用户未评分的产品的index
-    not_bought_index = ratings[target_user].isin([0]).index
-    new_list = {}
-    for item in not_bought_index:
-        grade = get_sim_in_item(ratings=ratings, centered_rating=centered_rating, target_user=target_user,
-                                target_item=item)
-        new_list[item] = grade
-    recommend_list = Series(new_list)
-    recommend_list.index.name = 'item_ID'
-    recommend_list.name = 'Recomend_grade'
-    recommend_list = recommend_list.sort_values(ascending=False)[: k]
-    return recommend_list
+    start = time.clock()
+    # 获取产品-用户 评分表
+    ratings = get_mysql_grade()
+    end = time.clock()
+    print('Request Data time: %s Seconds' % (end - start))
 
 
-print (get_sim_in_item(ratings=ratings, centered_rating=centered_rating, target_user=10001,target_item=5662))
+    # 将评分二维表转成json,并存入本地
+    with open( 'ratings.json', 'w') as f:
+        a_json = ratings.to_json(orient='split')
+        json.dump(a_json, f)
+    print('The grade in json is success ! ')
+
+    # 根据产品-用户 评分表,算出各个产品(用户)之间的相似度,返回相似度二维表
+    def get_sim_form(ratings):
+        sim_form = DataFrame(index=ratings.index, columns=ratings.index)
+        index_length = len(ratings.index)
+        print(index_length)
+        for i in range(index_length):
+            print(i)
+            # print('(' + str(i) + '):  ', end=' ')
+            for j in range(i + 1):
+                # print(j,end=' ')
+                if i == j :
+                    sim = float(1)
+                else:
+                    sim = pearsonr(ratings.iloc[i, :], ratings.iloc[j, :])
+                sim_form.iloc[i, j] = sim
+        sim_form = sim_form.fillna(0)
+
+        return sim_form
+
+    start = time.clock()
+    sim_form = get_sim_form(ratings)
+    end = time.clock()
+    print('Creating the sim Data time: %s Seconds' % (end - start))
+
+
+    # 将相似度二维表转成json,并存入本地
+    with open('grade_sim_form.json', 'w') as f:
+        a_json = sim_form.to_json(orient='split')
+        json.dump(a_json, f)
+    print('The sim_form in json is success ! ')
+
+    config.GEN_STATUE = 0
+
+#############################################################################
 
 
 
-print (get_item_in_item(ratings=ratings, centered_rating=centered_rating, target_user=10001, k=10))
+# All_start =time.clock()
+#
+# data_to_json()
+#
+# # 将json转回二维表
+# # with open('grade_sim_form.json', 'r') as f:
+# # with open('grade.json', 'r') as f:
+# #     a_json = json.load(fp=f)
+#
+# # a_dict = json.loads(a_json)
+# # ratings = DataFrame(a_dict['data'], index=a_dict['index'], columns=a_dict['columns'])
+#
+# # ratings.iloc[0,:]
+#
+# All_end =time.clock()
+# print('All  time: %s Seconds'%(All_end-All_start))

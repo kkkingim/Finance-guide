@@ -1,0 +1,215 @@
+{% extends "front/base.html" %}
+
+{% block title %}
+    全部产品
+{% endblock %}
+
+{% block body %}
+    <body>
+    <style type="text/css">
+        body {
+            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+        }
+
+        .nav-title {
+            font-size: 30px;
+            display: inline-block;
+            padding-left: 10%;
+            padding-top: 5px;
+
+        }
+
+        #products_list {
+            margin-top: 20px;
+        }
+
+        .pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {
+            background-color: rgba(200, 200, 200, 0.7);
+            border-color: #ecf0f1;
+            color: #000;
+
+        }
+
+        .pagination > li > a, .pagination > li > span {
+            color: #000;
+            border-color: #ecf0f1;
+            background-color: #0000;
+        }
+
+        #page_disable:hover, #page_disable {
+            border-color: #ecf0f1;
+            background-color: #ecf0f1;
+
+        }
+
+        .page_footer {
+            display: inline-block;
+            float: right;
+            margin-top: -20px;
+            margin-bottom: -20px;
+        }
+
+        .btn-filter, .btn-filter:focus, .btn-filter:hover {
+            background-color: #0000;
+            border-color: #ecf0f1;
+            color: #000;
+
+        }
+
+        .form-control {
+            margin-right: 20px;
+            float: left;
+            display: inline-block;
+            width: 60%;
+            border-color: #ecf0f1;
+
+        }
+        .filter_box{
+            display: inline-block;
+            float: left;
+            width: 60%;
+        }
+        #products_list th{
+            text-align: center;
+        }
+
+    </style>
+    <nav class="navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <i class="fa fa-list" style="font-size: 24px;margin-top:15px;"></i>
+                </button>
+                <a class="navbar-brand" href="{{ url_for("front.index") }}"><i class="fas fa-home"></i> </a>
+            </div>
+
+            <div class="nav-title">
+                <a>全部产品</a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="menuItem"><a href="{{ url_for("front.personal_view") }}">个人推荐</a></li>
+                    <li id="sp"><a>|</a></li>
+                    <li class="menuItem"><a href="" style="font-size:20px">{{ g.current_user.username }}</a></li>
+                    <li class="menuItem"><a href="{{ url_for('front.logout') }}" style="font-size:14px">注销</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+    <div id="products_list" style="border-top: 0">
+        <div class="container">
+            <div class="row">
+                <div class="row wow fadeInDown text-center">
+                    <table id="rec_list" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>股票代码</th>
+                            <th>股票名称</th>
+                            <th>发行总数(万股)</th>
+                            <th>发行价格</th>
+                            <th>最新价格</th>
+                            <th>发行市盈率</th>
+                            <th>总涨幅</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% macro productrow( pid, pname,amt,price,last_p,pe, t_inc) %}
+                            <tr>
+                                <td>{{ pid }}</td>
+                                <td><a href="{{ url_for("front.product_detail", id=pid) }}">{{ pname }}</a></td>
+                                <td>{{ amt }}</td>
+                                <td>{{ price }}</td>
+                                <td>{{ last_p }}</td>
+                                <td>{{ pe }}</td>
+                                <td>{{ t_inc }}</td>
+                            </tr>
+                        {% endmacro %}
+
+                        {% for product in products %}
+                            {{ productrow( product.id, product.name,product.amount,product.price, product.last_price, product.PE_ratio, product.total_increase) }}
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                    <div class="filter_box">
+                        <form>
+                            <input class="form-control" type="text" name="wd" value="{{ wd }}">
+                            <input style="float: left;" class="btn btn-filter btn-sm" type="submit" value="过滤">
+                        </form>
+                    </div>
+                    <div class="page_footer">
+                        <nav>
+                            <ul class="pagination">
+
+                                {% macro gen_page_footer(url) %}
+                                    {% set enda = "" %}
+                                    {% if wd %}
+                                        {% set enda = "&wd={}".format(wd) %}
+                                    {% endif %}
+                                    <li class="page-item">
+                                        {% if current_page == 1 %}
+                                            <a id="page_disable" class="page-link"><span>&laquo;</span></a>
+                                        {% else %}
+                                            <a class="page-link"
+                                               href="{{ url_for(url, page= current_page - 1 )  + enda }}"><span>&laquo;</span></a>
+                                        {% endif %}
+                                    </li>
+
+
+                                    {% if current_page < 3 or last_page <= 5 %}
+                                        {% set list = [1,2,3,4,5] %}
+                                    {% elif current_page > last_page - 2 %}
+                                        {% set list = range(last_page - 4, last_page + 1) %}
+                                    {% else %}
+                                        {% set list = range(current_page - 2, current_page + 3) %}
+                                    {% endif %}
+
+
+                                    {% for p in list %}
+                                        {% if p == current_page or p > last_page %}
+                                            <li class="page-item"><a id="page_disable"
+                                                                     class="page-link">{{ p }}</a></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="{{ url_for(url, page= p )  + enda }}">{{ p }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+
+
+
+                                    <li class="page-item">
+                                        {% if current_page == last_page %}
+                                            <a id="page_disable" class="page-link"><span>&raquo;</span></a>
+                                        {% else %}
+                                            <a class="page-link"
+                                               href="{{ url_for(url, page= current_page + 1 )  + enda }}"><span>&raquo;</span></a>
+                                        {% endif %}
+
+                                    </li>
+                                {% endmacro %}
+                                {{ gen_page_footer("front.products_view") }}
+
+
+                            </ul>
+                        </nav>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
+{% block end %}
+    {{ super() }}
+
+{% endblock %}

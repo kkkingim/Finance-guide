@@ -47,6 +47,47 @@
 
                     <h1>TODO</h1>
                     <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">重建模型</div>
+                        <div class="am-u-sm-8 am-u-md-10">
+                            <button class="re-gen-models am-btn am-btn-danger">重建</button>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">所属类别</div>
+                        <div class="am-u-sm-8 am-u-md-10">
+                            <select data-am-selected="{btnSize: 'sm'}" style="display: none;">
+                                <option value="option1">选项一...</option>
+                                <option value="option2">选项二.....</option>
+                                <option value="option3">选项三........</option>
+                            </select>
+                            <div class="am-selected am-dropdown " id="am-selected-mvmmk" data-am-dropdown="">
+                                <button type="button"
+                                        class="am-selected-btn am-btn am-dropdown-toggle am-btn-sm am-btn-default"><span
+                                        class="am-selected-status am-fl">选项一...</span> <i
+                                        class="am-selected-icon am-icon-caret-down"></i></button>
+                                <div class="am-selected-content am-dropdown-content"><h2
+                                        class="am-selected-header"><span
+                                        class="am-icon-chevron-left">返回</span></h2>
+                                    <ul class="am-selected-list">
+                                        <li class="am-checked" data-index="0" data-group="0" data-value="option1"><span
+                                                class="am-selected-text">选项一...</span> <i class="am-icon-check"></i>
+                                        </li>
+                                        <li class="data-index=&quot;1&quot;" data-group="0" data-value="option2"><span
+                                                class="am-selected-text">选项二.....</span> <i class="am-icon-check"></i>
+                                        </li>
+                                        <li class="data-index=&quot;2&quot;" data-group="0" data-value="option3"><span
+                                                class="am-selected-text">选项三........</span> <i
+                                                class="am-icon-check"></i>
+                                        </li>
+                                    </ul>
+                                    <div class="am-selected-hint"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
                         <div class="am-u-sm-4 am-u-md-2 am-text-right">所属类别</div>
                         <div class="am-u-sm-8 am-u-md-10">
                             <select data-am-selected="{btnSize: 'sm'}" style="display: none;">
@@ -198,4 +239,28 @@
 
 
     </div>
+
+    <script>
+
+        $(".re-gen-models").on('click', function () {
+            alert("开始重建!");
+            $(".re-gen-models").text("重建中").attr("disabled", "disabled");
+
+            $.ajax({
+                url: "{{ url_for("cms.re_gen_models") }}",
+                type: "post",
+                data: {
+                    action: 'regen'
+                },
+                success: function (data) {
+                    if (data['statue'] === "complete") {
+                        $(".re-gen-models").text("重建完成").removeAttr("disabled");
+                    }
+                }
+            });
+
+        });
+
+    </script>
+
 {% endblock %}

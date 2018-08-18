@@ -22,3 +22,5 @@ RUN_START_TIME = datetime.now()
 # RUN_START_TIME = datetime.now() - timedelta(hours=2, minutes=22)
 
 ROW_PER_PAGE = 10
+
+GEN_STATUE = 0

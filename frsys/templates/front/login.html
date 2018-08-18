@@ -5,26 +5,97 @@
 {% endblock %}
 
 {% block body %}
-    <form action="" method="post">
-        <table>
-            <tr>
-                <td>用户名</td>
-                <td><input type="text" name="username"></td>
-            </tr>
-            <tr>
-                <td>密码</td>
-                <td><input type="password" name="password"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="submit" value="登录"></td>
-            </tr>
-            {% if  message %}
-                <tr>
-                    <td colspan="2"><a style="color: red">{{ message }}</a></td>
+    <style type="text/css">
+        body {
+            background: url({{  url_for("static", filename="front/imgs/login_bg.jpg") }} ) no-repeat center center;
+            background-size: cover;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+        }
 
-                </tr>
+        .form-signin {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+        .form-signin .form-signin-heading,
+        .form-signin .checkbox {
+            margin-bottom: 10px;
+        }
+
+        .form-signin .checkbox {
+            font-weight: normal;
+        }
+
+        .form-signin .form-control {
+            position: relative;
+            height: auto;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
+
+        .form-signin input {
+            margin-bottom: 10px;
+            border-radius: 0;
+            background: #0000;
+            color: #fff;
+        }
+
+        .form-signin input[type=checkbox] {
+            display: block;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        .form-signin-heading {
+            color: white;
+        }
+
+        .mybutton_standard, .mybutton_standard:hover {
+            background: #0000;
+            border-radius: 0;
+        }
+
+        label {
+            color: #fff;
+        }
+
+        h2 {
+            font-size: 40px;
+        }
+
+    </style>
+    <body>
+    <div class="container-fluid">
+        <form class="form-signin" action="" method="post">
+            <h2 class="form-signin-heading">请登录:</h2>
+            <label for="inputUsername" class="sr-only">用户名</label>
+            <input type="text" name="username" id="inputUsername" class="form-control" placeholder="用户名"
+                   required="" autofocus="">
+            <label for="inputPassword" class="sr-only">密码</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="密码"
+                   required="">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="rememberme" value="remember-me"> 记住我
+                </label>
+            </div>
+            <input class="btn btn-lg btn-default btn-block mybutton_standard" type="submit" value="登录" />
+            <a style="color: white;float: right;margin-top:5px;" href="{{ url_for("front.reg") }}">前往注册</a>
+            {% if message %}
+                <a style="color: #ff5358;margin-top:5px;"> {{ message }}</a>
             {% endif %}
-        </table>
-    </form>
+        </form>
+    </div>
+    </body>
+
 {% endblock %}

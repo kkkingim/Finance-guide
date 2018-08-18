@@ -8,7 +8,10 @@ from apps.models import Product, Grade
 from apps.front.forms import RegForm
 import config
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import os
+from threading import Thread
+# from utils import rd
 
 bp = Blueprint("cms", __name__, url_prefix="/cms")
 
@@ -448,15 +451,13 @@ def user_grade_mgr():
             }
             infos.append(l)
 
-
     if wd:
         tmp = []
         for info in infos:
-            if wd in info['username'] or wd in info['pid'] or wd in info['productname'] :
+            if wd in info['username'] or wd in info['pid'] or wd in info['productname']:
                 tmp.append(info)
 
         infos = tmp
-
 
     amt = len(infos)
     page = int(request.values.get("page", 1))
@@ -475,13 +476,13 @@ def user_grade_mgr():
         last_page += 1
 
     if amt != 0:
-        infos = infos[(page - 1) * config.ROW_PER_PAGE :(page - 1) * config.ROW_PER_PAGE + config.ROW_PER_PAGE]
+        infos = infos[(page - 1) * config.ROW_PER_PAGE:(page - 1) * config.ROW_PER_PAGE + config.ROW_PER_PAGE]
 
     context = {
         'current_page': page,
         'last_page': last_page,
-        'infos' : infos,
-        "wd" : wd
+        'infos': infos,
+        "wd": wd
 
     }
 
@@ -499,7 +500,7 @@ def add_grade():
     user = FrontUser.query.filter(db.or_(FrontUser.id == uid, FrontUser.username == uid))
     product = Product.query.filter(db.or_(Product.id == pid, Product.name == pid))
     if user.count() == 1 and product.count() == 1:
-        g = Grade(uid = user.first().id, pid= product.first().id, grade=grade)
+        g = Grade(uid=user.first().id, pid=product.first().id, grade=grade)
         db.session.add(g)
         db.session.commit()
         return jsonify({"statue": True})
@@ -512,7 +513,7 @@ def add_grade():
 def del_grades():
     ids = request.form.get("id_list", "")
     ids = ids.split(",")
-    ids = [(ids[2*i], ids[2*i+1]) for i in range(len(ids)//2)]
+    ids = [(ids[2 * i], ids[2 * i + 1]) for i in range(len(ids) // 2)]
     grades = [Grade.query.filter(Grade.uid == id[0], Grade.pid == id[1]).first() for id in ids]
     if grades:
         for grade in grades:
@@ -553,6 +554,7 @@ def update_grade_info():
         return jsonify({"statue": True})
     return jsonify({"statue": False})
 
+
 '''
 ######################
 Setting View (useless)
@@ -560,14 +562,33 @@ Setting View (useless)
 '''
 
 
-# @bp.route('/cmssetting/')
-# @login_required
-# def cms_setting():
-#     context = {
-#         "sth": "v"
-#
-#     }
-#     return render_template("cms/setting.html", **context)
+@bp.route('/cmssetting/')
+@login_required
+def cms_setting():
+    context = {
+        "sth": "v"
+
+    }
+    return render_template("cms/setting.html", **context)
+
+
+@bp.route('/rgm/', methods=['POST'])
+@login_required
+def re_gen_models():
+
+
+    action = request.form.get("action", "")
+    if action:
+        if action == "regen":
+            if os.path.exists('ratings.json'):
+                os.remove('ratings.json')
+            if os.path.exists('grade_sim_form.json'):
+                os.remove('grade_sim_form.json')
+
+            rd.data_to_json()
+
+            return jsonify({"statue": 'complete'})
+    return jsonify({"statue": True})
 
 
 '''
@@ -575,7 +596,6 @@ Setting View (useless)
 Something cause Error
 ######################
 '''
-
 
 # # test
 # @bp.route('/test/')

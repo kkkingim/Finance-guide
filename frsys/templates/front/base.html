@@ -1,49 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title> {% block title %}  {% endblock %} </title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0">
+    <meta name="description" content="Finacial Recommend System">
+    <meta name="author" content="">
 
-    <style>
-        * {
-            text-decoration: None;
-            color: aliceblue;
-        }
+    <title>{% block title %}
 
-        body {
-            background: gray;
-        }
+    {% endblock %}</title>
 
-        .header {
-            overflow: hidden;
-        }
+    <link href="{{ url_for("static", filename="front/css/bootstrap.min.css") }}" rel="stylesheet">
+{#    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">#}
 
-        .header ul li {
-            float: left;
-            padding: 10px 30px;
-            color: aliceblue;
-        }
-        input{
-            color: black;
-        }
 
-    </style>
+    <!-- Custom CSS-->
+    <link href="{{ url_for("static", filename="front/css/general.css") }}" rel="stylesheet">
+    <!-- Owl-Carousel -->
+    <link href="{{ url_for("static", filename="front/css/custom.css") }}" rel="stylesheet">
+
+    <link href="{{ url_for("static", filename="front/css/owl.carousel.css") }}" rel="stylesheet">
+{#    <link href="https://cdn.bootcss.com/owl-carousel/1.32/owl.carousel.css" rel="stylesheet">#}
+
+    <link href="{{ url_for("static", filename="front/css/owl.theme.css") }}" rel="stylesheet">
+{#    <link href="https://cdn.bootcss.com/owl-carousel/1.32/owl.theme.css" rel="stylesheet">#}
+
+
+    <link href="{{ url_for("static", filename="front/css/style.css") }}" rel="stylesheet">
+    <link href="{{ url_for("static", filename="front/css/animate.css") }}" rel="stylesheet">
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="front/css/magnific-popup.css") }}">
+
+    <!-- js files -->
+    <script src="{{ url_for("static", filename="front/js/modernizr-2.6.2.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="front/js/all.js") }}"></script>
+{#    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">#}
+
+
 </head>
-<body>
-<nav class="header">
-    <ul>
-        <li><a href="{{ url_for("front.index") }}">主页</a></li>
-        <li><a href="{{ url_for("front.reg") }}">注册</a></li>
-        <li><a href="{{ url_for("front.login") }}">登录</a></li>
-        <li><a href="{{ url_for("front.setting") }}">设置</a></li>
-
-        <li><a href="{{ url_for("common.admin_index") }}">Admin</a></li>
-    </ul>
-</nav>
-
 {% block body %}
+
 
 {% endblock %}
 
-</body>
+{% block end %}
+    <!-- JavaScript -->
+    <script src="{{ url_for("static", filename="front/js/jquery-1.10.2.js") }}"></script>
+{#    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>#}
+
+    <script src="{{ url_for("static", filename="front/js/bootstrap.js") }}"></script>
+{#    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>#}
+
+    <script src="{{ url_for("static", filename="front/js/owl.carousel.js") }}"></script>
+{#    <script src="https://cdn.bootcss.com/owl-carousel/1.32/owl.carousel.js"></script>#}
+
+    <script src="{{ url_for("static", filename="front/js/script.js") }}"></script>
+    <!-- StikyMenu -->
+    <script src="{{ url_for("static", filename="front/js/stickUp.min.js") }}"></script>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $(document).ready(function () {
+                $('.navbar-default').stickUp();
+
+            });
+        });
+    </script>
+    <!-- Smoothscroll -->
+    <script type="text/javascript" src="{{ url_for("static", filename="front/js/jquery.corner.js") }}"></script>
+    <script src="{{ url_for("static", filename="front/js/wow.min.js") }}"></script>
+    <script>
+        new WOW().init();
+    </script>
+    <script src="{{ url_for("static", filename="front/js/classie.js") }}"></script>
+    <script src="{{ url_for("static", filename="front/js/uiMorphingButton_inflow.js") }}"></script>
+    <!-- Magnific Popup core JS file -->
+    <script src="{{ url_for("static", filename="front/js/jquery.magnific-popup.js") }}"></script>
+
+{% endblock %}
+
+
 </html>

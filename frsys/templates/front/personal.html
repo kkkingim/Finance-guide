@@ -1,0 +1,310 @@
+{% extends "front/base.html" %}
+
+{% block title %}
+    {{ g.current_user.username }} 的 个人推荐
+{% endblock %}
+
+{% block body %}
+
+    <body>
+    <style type="text/css">
+        body {
+            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+        }
+
+        .nav-title {
+            font-size: 30px;
+            display: inline-block;
+            padding-left: 10%;
+            padding-top: 5px;
+
+        }
+
+        .user_grade_item {
+            padding: 20px 20px 0 0;
+        }
+
+        .user_grade {
+            padding-left: 20px;
+            display: block;
+        }
+
+        .add_btn {
+            margin-top: 10px;
+            border: none;
+            border-radius: 20%;
+        }
+
+        .tips {
+            padding-left: 20px;
+            margin: 20px;
+        }
+
+        #recommend_list th {
+            text-align: center;
+        }
+
+        .sel_grade {
+            border-color: #fff;
+        }
+
+        @media only screen and (max-width: 800px) {
+            #rec_list td:nth-child(2),
+            #rec_list th:nth-child(2),
+            #rec_list td:nth-child(4),
+            #rec_list th:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+
+    <!-- NavBar-->
+    <nav class="navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <i class="fa fa-list" style="font-size: 24px;margin-top:15px;"></i>
+                </button>
+                <a class="navbar-brand" href="{{ url_for("front.index") }}"><i class="fas fa-home"></i> </a>
+            </div>
+
+            <div class="nav-title">
+                <a>个人推荐</a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+
+                    <li class="menuItem"><a href="{{ url_for("front.products_view") }}">全部产品</a></li>
+                    <li id="sp"><a>|</a></li>
+                    <li class="menuItem"><a href="" style="font-size:20px">{{ g.current_user.username }}</a></li>
+                    <li class="menuItem"><a href="{{ url_for('front.logout') }}" style="font-size:14px">注销</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="user_grade col-md-12 col-sm-12 col-xs-12">
+        {% macro gradelabel(pname, grade, pid, color) %}
+            <div class="user_grade_item col-md-3 col-sm-6 col-xs-6">
+                <div class="alert alert-{{ color }} alert-dismissible fade in">
+                    <button type="button" class="close del_grade" data-dismiss="alert" aria-label="Close"
+                            pid="{{ pid }}"><span
+                            aria-hidden="true">×</span></button>
+                    <strong><span style="display: inline-block;width: 60%;">{{ pname }}:</span></strong><strong
+                        style="float: right;padding-right: 10%"> ( {{ grade }} )</strong>
+                </div>
+            </div>
+        {% endmacro %}
+
+        {% for grade in grades %}
+            {% if loop.index % 4 == 1 %}
+                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "warning") }}
+            {% elif loop.index % 4 == 2 %}
+                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "success") }}
+            {% elif loop.index % 4 == 3 %}
+                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "info") }}
+            {% elif loop.index % 4 == 0 %}
+                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "danger") }}
+            {% endif %}
+        {% endfor %}
+
+
+        <div class="user_grade_item col-md-3 col-sm-6 col-xs-6">
+            <button type="button" class="btn btn-success btn-lg add_btn" data-toggle="modal"
+                    data-target="#add_grade_modal"><i class="fas fa-plus-circle"></i></button>
+        </div>
+        <!-- Button trigger modal -->
+    </div>
+
+    <!-- recommend_list -->
+
+    <div class="row col-md-12 col-sm-12 col-xs-12">
+        <div class="tips">
+            <h3>
+                根据您的评分,我们为您推荐以下产品:
+                <br>
+                <!-- 您未评分或者评分产品过少,我们为您推荐下列热门产品 -->
+            </h3>
+        </div>
+    </div>
+
+
+    <div id="recommend_list" class="content-section-b" style="border-top: 0">
+        <div class="container">
+            <div class="row">
+                <div class="row wow fadeInDown text-center">
+                    <table id="rec_list" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>股票代码</th>
+                            <th>股票名称</th>
+                            <th>最新价格</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% macro recproductrow(index, pid, pname, last_p) %}
+                            <tr>
+                                <td scope="row">{{ index }}</td>
+                                <td>{{ pid }}</td>
+                                <td><a href="{{ url_for('front.product_detail', id=pid)}} ">{{ pname }}</a></td>
+                                <td>{{ last_p }}</td>
+                            </tr>
+                        {% endmacro %}
+
+                        {% for product in products %}
+                            {{ recproductrow(loop.index, product.id, product.name, product.last_price) }}
+                        {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <!-- /.row -->
+
+        </div>
+    </div>
+
+
+    </body>
+{% endblock %}
+
+{% block end %}
+    {{ super() }}
+    <!-- Modal -->
+    <div class="modal fade" id="add_grade_modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">添加评分</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="search_box">
+                            <input type="text" name="wd" value="">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                搜索
+                            </button>
+                        </div>
+                        <div class="search_list">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>代码</th>
+                                    <th>简称</th>
+                                    <th style="width: 20px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colspan="3">请通过 代码 或 简称 来搜索</td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="grade_input" style="float: right">
+                            <label for="select_grade" class="control-label">评分: </label>
+                            <select id="select_grade" style="display: inline-block"
+                                    class="form-control-static form-control">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="submit_grade btn btn-primary">提交</button>
+                </div>
+                <script>
+                    $(".search_box button").on("click", function () {
+                        $.ajax({
+                            url: "{{ url_for("front.get_info") }}",
+                            type: "post",
+                            data: {wd: $(this).prev("input").val()},
+                            success: function (data) {
+                                $list = $(".search_list tbody");
+                                $list.empty();
+                                for (var i in data) {
+                                    $list.append("<tr>\n" +
+                                        "<td>" + data[i][0] + "</td>\n" +
+                                        "<td>" + data[i][1] + "</td>\n" +
+                                        "<td>\n" +
+                                        "<button type=\"button\" pid=\"" + data[i][0] + "\" class=\"sel_grade btn btn-default btn-xs\">选择</button>\n" +
+                                        "</td>\n" +
+                                        "</tr>")
+                                }
+                                $('.sel_grade').on('click', function () {
+                                    $(".search_list .btn-success").removeClass('btn-success').addClass('btn-default');
+                                    $(this).removeClass('btn-default').addClass('btn-success');
+                                });
+                            },
+                            error: function (e) {
+                                alert("错误！！");
+                            }
+                        });
+
+                    });
+                    $(".submit_grade").on("click", function () {
+                        var $pid = $(".search_list .btn-success").attr("pid");
+                        var $grade = $(".grade_input select").val();
+                        if ($pid && $grade) {
+                            $.ajax({
+                                url: "{{ url_for("front.add_user_grade") }}",
+                                type: "post",
+                                data: {
+                                    pid: $pid,
+                                    grade: $grade
+                                },
+                                success: function (data) {
+                                    alert("评分成功");
+                                    window.location.reload();
+                                },
+                                error: function (e) {
+                                    alert("评分失败");
+                                }
+                            });
+                        }
+
+                    });
+                </script>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- User JS -->
+    <script type="text/javascript">
+        $('.del_grade').on('click', function () {
+            var $pid = $(this).attr("pid");
+            $.ajax({
+                url: "{{ url_for("front.del_user_grade") }}",
+                type: "post",
+                data: {
+                    pid: $pid
+                },
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (e) {
+                    window.location.reload();
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
+
