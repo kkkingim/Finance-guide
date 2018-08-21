@@ -7,298 +7,337 @@
 {% block body %}
     <body id="home">
 
-<style type="text/css">
+    <style type="text/css">
 
-    .intro-header {
-        background: url({{ url_for("static", filename="front/imgs/intro/intro5.jpg") }}) no-repeat center center;
-        background-size: cover;
+        .intro-header {
+            background: url({{ url_for("static", filename="front/imgs/intro/intro5.jpg") }}) no-repeat center center;
+            background-size: cover;
 
-    }
-
-    body {
-        font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
-    }
-
-    .subtitle2 {
-        margin-left: 20%;
-    }
-
-    table th {
-        text-align: center;
-    }
-
-    .footer-banner span {
-        width: 100px;
-        display: inline-block;
-    }
-
-    @media only screen and (max-width: 800px) {
-        #rec_list td:nth-child(2),
-        #rec_list th:nth-child(2),
-        #rec_list td:nth-child(4),
-        #rec_list th:nth-child(4) {
-            display: none;
         }
-    }
 
-    #rec_list {
-        width: 85%;
-    }
+        body {
+            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+        }
 
-    #sp a:hover {
-        color: #34495e;
-    }
-</style>
+        .subtitle2 {
+            margin-left: 20%;
+        }
 
-<!-- FullScreen -->
-<div class="intro-header">
-    <div class="col-xs-12 text-center abcen1">
-        <h1 class="h1_home wow fadeIn" data-wow-delay="0.1s">金融产品推荐系统</h1>
-        <h3 class="h3_home wow fadeIn" data-wow-delay="0.2s">通过基于用户的智能推荐算法</h3>
-        <h3 class="h3_home wow fadeIn subtitle2" data-wow-delay="0.2s">为你定制的个性化推荐</h3>
-        <ul class="list-inline intro-social-buttons">
-            <li id='login_btn'>
+        table th {
+            text-align: center;
+        }
 
-                {% if g.current_user %}
-                    <a href="{{ url_for("front.personal_view") }}" class="btn btn-lg mybutton_cyano wow fadeIn"
+        .footer-banner span {
+            width: 100px;
+            display: inline-block;
+        }
+
+        @media only screen and (max-width: 800px) {
+            #rec_list td:nth-child(2),
+            #rec_list th:nth-child(2),
+            #rec_list td:nth-child(4),
+            #rec_list th:nth-child(4) {
+                display: none;
+            }
+        }
+
+        #rec_list {
+            width: 85%;
+        }
+
+        #sp a:hover {
+            color: #34495e;
+        }
+    </style>
+
+    <!-- FullScreen -->
+    <div class="intro-header">
+        <div class="col-xs-12 text-center abcen1">
+            <h1 class="h1_home wow fadeIn" data-wow-delay="0.1s">金融产品推荐系统</h1>
+            <h3 class="h3_home wow fadeIn" data-wow-delay="0.2s">通过基于用户的智能推荐算法</h3>
+            <h3 class="h3_home wow fadeIn subtitle2" data-wow-delay="0.2s">为你定制的个性化推荐</h3>
+            <ul class="list-inline intro-social-buttons">
+                <li id='login_btn'>
+
+                    {% if g.current_user %}
+                        <a href="{{ url_for("front.personal_view") }}" class="btn btn-lg mybutton_cyano wow fadeIn"
+                           data-wow-delay="0.4s">
+                            <span class="network-name">个人推荐</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for("front.login") }}" class="btn btn-lg mybutton_cyano wow fadeIn"
+                           data-wow-delay="0.4s">
+                            <span class="network-name">登录</span>
+                        </a>
+
+                    {% endif %}
+
+
+                </li>
+                <li id='learn_more_btn'>
+                    <a href="#learn_more" class="btn btn-lg mybutton_standard wow swing wow fadeIn"
                        data-wow-delay="0.4s">
-                        <span class="network-name">个人推荐</span>
+                        <span class="network-name">了解更多</span>
                     </a>
-                {% else %}
-                    <a href="{{ url_for("front.login") }}" class="btn btn-lg mybutton_cyano wow fadeIn"
-                       data-wow-delay="0.4s">
-                        <span class="network-name">登录</span>
-                    </a>
-
-                {% endif %}
-
-
-            </li>
-            <li id='learn_more_btn'>
-                <a href="#learn_more" class="btn btn-lg mybutton_standard wow swing wow fadeIn" data-wow-delay="0.4s">
-                    <span class="network-name">了解更多</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- /.container -->
-    <div class="col-xs-12 text-center abcen wow fadeIn">
-        <div class="button_down ">
-            <a class="imgcircle wow bounceInUp" data-wow-duration="1.5s" href="#recommend_list">
-                <img class="img_scroll" src="{{ url_for("static", filename="front/imgs/circle.png") }}" alt="">
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- NavBar-->
-<nav class="navbar-default" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <i class="fa fa-list" style="font-size: 24px;margin-top:15px;"></i>
-            </button>
-            <a class="navbar-brand" href="#home"><i class="fas fa-home"></i> </a>
-        </div>
-
-        <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-
-                <li class="menuItem"><a href="#recommend_list">推荐产品</a></li>
-                <li class="menuItem"><a href="#learn_more">了解更多</a></li>
-                <li id="sp"><a>|</a></li>
-                {% if g.current_user %}
-                    <li class="menuItem"><a href="{{ url_for("front.personal_view") }}"
-                                            style="font-size:22px; color: #666666">{{ g.current_user.username }}</a>
-                    </li>
-                    <li class="menuItem"><a href="{{ url_for("front.logout") }}" style="font-size:14px">注销</a></li>
-                {% else %}
-                    <li class="menuItem"><a href="{{ url_for("front.login") }}">登录</a></li>
-                {% endif %}
+                </li>
             </ul>
         </div>
-
-    </div>
-</nav>
-<!-- recommend_list -->
-
-
-<div id="recommend_list" class="content-section-b" style="border-top: 0">
-    <div class="container">
-
-        <div class="col-md-6 col-md-offset-3 text-center wrap_title">
-            <h3>热门金融产品</h3>
-            <p class="lead" style="margin-top:0">十大用户最热产品</p>
-
-        </div>
-
-        <div class="row">
-            <div class="row wow fadeInDown text-center">
-                <table id="rec_list" class="col-xs-offset-1 table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>排名</th>
-                        <th>股票代码</th>
-                        <th>股票名称</th>
-                        <th>最新价格</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for product in products %}
-                        <tr>
-                            <td scope="row">{{ loop.index }}</td>
-                            <td>{{ product.id }}</td>
-                            <td><a href="{{ url_for("front.product_detail", id=product.id) }}">{{ product.name }}</a></td>
-                            <td>{{ product.last_price }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-
-        </div>
-        <!-- /.row -->
-
-    </div>
-</div>
-
-<!-- learn_more -->
-
-
-<div id="learn_more" class="content-section-a">
-
-    <div class="container">
-
-        <div class="row">
-
-            <div class="col-sm-6 pull-right wow fadeInRightBig">
-                <img class="img-responsive" draggable="false"
-                     src="{{ url_for("static", filename="front/imgs/ipad.png") }}" alt="">
-            </div>
-
-            <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
-                <h3 class="section-heading">金融推荐</h3>
-                <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet sit
-                    dolor greand fdanrh sdfs
-                </div>
-                <p class="lead">
-                    In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
-                    inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
-                    patria esse cariorem. Quae qui non vident, nihilamane umquam
-                    magnum ac cognitione.
-                </p>
+        <!-- /.container -->
+        <div class="col-xs-12 text-center abcen wow fadeIn">
+            <div class="button_down ">
+                <a class="imgcircle wow bounceInUp" data-wow-duration="1.5s" href="#recommend_list">
+                    <img class="img_scroll" src="{{ url_for("static", filename="front/imgs/circle.png") }}" alt="">
+                </a>
             </div>
         </div>
     </div>
-    <!-- /.container -->
-</div>
 
-<div class="content-section-b">
-
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6 wow fadeInLeftBig">
-                <div id="owl-demo-1" class="owl-carousel">
-                    <a href="img/iphone.png" class="image-link">
-                        <div class="item">
-                            <img class="img-responsive img-rounded"
-                                 src="{{ url_for("static", filename="front/imgs/iphone.png") }}" alt="">
-                        </div>
-                    </a>
-                    <a href="img/iphone.png" class="image-link">
-                        <div class="item">
-                            <img class="img-responsive img-rounded"
-                                 src="{{ url_for("static", filename="front/imgs/iphone.png") }}" alt="">
-                        </div>
-                    </a>
-                    <a href="img/iphone.png" class="image-link">
-                        <div class="item">
-                            <img class="img-responsive img-rounded"
-                                 src="{{ url_for("static", filename="front/imgs/iphone.png") }}" alt="">
-                        </div>
-                    </a>
-                </div>
+    <!-- NavBar-->
+    <nav class="navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <i class="fa fa-list" style="font-size: 24px;margin-top:15px;"></i>
+                </button>
+                <a class="navbar-brand" href="#home"><i class="fas fa-home"></i> </a>
             </div>
 
-            <div class="col-sm-6 wow fadeInRightBig" data-animation-delay="200">
-                <h3 class="section-heading">算法简介</h3>
-                <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet sit
-                    dolor greand fdanrh sdfs
-                </div>
-                <p class="lead">
-                    In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
-                    inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
-                    patria esse cariorem. Quae qui non vident, nihilamane umquam
-                    magnum ac cognitione.
-                </p>
+            <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
 
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="content-section-a">
-
-    <div class="container">
-
-        <div class="row">
-
-            <div class="col-sm-6 pull-right wow fadeInRightBig">
-                <img class="img-responsive" draggable="false"
-                     src="{{ url_for("static", filename="front/imgs/doge.png") }}" alt="">
-            </div>
-
-            <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
-                <h3 class="section-heading">我们的优势</h3>
-                <p class="lead">A special thanks to Death to the Stock Photo for providing the photographs that you see
-                    in this template.
-                </p>
-
-                <ul class="descp lead2">
-                    <li><i class="fas fa-dice-one"></i> Reliable and Secure Platform</li>
-                    <li><i class="fas fa-dice-two"></i> Everything is perfectly orgainized for future</li>
-                    <li><i class="fas fa-dice-three"></i> Attach large file easily</li>
+                    <li class="menuItem"><a href="#recommend_list">推荐产品</a></li>
+                    <li class="menuItem"><a href="#learn_more">了解更多</a></li>
+                    <li id="sp"><a>|</a></li>
+                    {% if g.current_user %}
+                        <li class="menuItem"><a href="{{ url_for("front.personal_view") }}"
+                                                style="font-size:22px; color: #666666">{{ g.current_user.username }}</a>
+                        </li>
+                        <li class="menuItem"><a href="{{ url_for("front.logout") }}" style="font-size:14px">注销</a></li>
+                    {% else %}
+                        <li class="menuItem"><a href="{{ url_for("front.login") }}">登录</a></li>
+                    {% endif %}
                 </ul>
             </div>
+
+        </div>
+    </nav>
+    <!-- recommend_list -->
+
+
+    <div id="recommend_list" class="content-section-b" style="border-top: 0">
+        <div class="container">
+
+            <div class="col-md-6 col-md-offset-3 text-center wrap_title">
+                <h3>热门金融产品</h3>
+                <p class="lead" style="margin-top:0"> " <strong> 股票 </strong> , <strong> 债券 </strong> , <strong> 外汇 </strong> " 中各自十大用户最热产品</p>
+
+            </div>
+            <div class="row">
+                <div class="row wow fadeInDown">
+                    <div id="owl-demo-1" class="owl-carousel">
+                        <div class="row wow fadeInDown text-center">
+                            <table id="rec_list" class="col-xs-offset-1 table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>股票代码</th>
+                                    <th>股票名称</th>
+                                    <th>最新价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.id }}</td>
+                                        <td>
+                                            <a href="{{ url_for("front.product_detail", id=product.id) }}">{{ product.name }}</a>
+                                        </td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row wow fadeInDown text-center">
+                            <table id="rec_list" class="col-xs-offset-1 table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>债券代码</th>
+                                    <th>债券名称</th>
+                                    <th>最新价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products_1 %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.id }}</td>
+                                        <td>
+                                            <a href="{{ url_for("front.product_detail", id=product.id) }}">{{ product.name }}</a>
+                                        </td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row wow fadeInDown text-center">
+                            <table id="rec_list" class="col-xs-offset-1 table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>外汇代码</th>
+                                    <th>外汇名称</th>
+                                    <th>最新价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products_2 %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.symbol }}</td>
+                                        <td>
+                                            <a href="{{ url_for("front.product_detail", id=product.symbol) }}">{{ product.name }}</a>
+                                        </td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- /.row -->
+
         </div>
     </div>
 
-</div>
+    <!-- learn_more -->
 
 
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-7">
-                <h3 class="footer-title"></h3>
-                <p>
-                    此网站使用 <a href="https://getbootstrap.com">BootStrap </a> , <a href="https://jquery.com/"> jQuery </a>
-                    , <a href="http://demo.cssmoban.com/cssthemes3/gbts_5_FlatfyV2/index.html"> Flatfy </a> 制作 .
-                </p>
+    <div id="learn_more" class="content-section-a">
 
-                <!-- LICENSE -->
-                <center>CopyRight&copy;2018</center>
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-sm-6 pull-right wow fadeInRightBig">
+                    <img class="img-responsive" draggable="false"
+                         src="{{ url_for("static", filename="front/imgs/ipad.png") }}" alt="">
+                </div>
+
+                <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
+                    <h3 class="section-heading">金融推荐</h3>
+                    <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet
+                        sit
+                        dolor greand fdanrh sdfs
+                    </div>
+                    <p class="lead">
+                        In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
+                        inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
+                        patria esse cariorem. Quae qui non vident, nihilamane umquam
+                        magnum ac cognitione.
+                    </p>
+                </div>
             </div>
-            <!-- /col-xs-7 -->
+        </div>
+        <!-- /.container -->
+    </div>
 
-            <div class="col-md-5">
-                <div class="footer-banner">
-                    <h3 class="footer-title">完成名单</h3>
-                    <ul>
-                        <li><span>指导老师:</span>王小刚</li>
-                        <li><span>算法设计:</span>李鑫垚</li>
-                        <li><span>UI设计:</span>朱泽霖</li>
-                        <li><span>数据收集:</span>张玉</li>
-                        <li><span>后台框架:</span>顾伟康</li>
+    <div class="content-section-b">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 wow fadeInLeftBig">
+                                <img class="img-responsive img-rounded"
+                                     src="{{ url_for("static", filename="front/imgs/iphone.png") }}" alt=""  draggable="false">
+                </div>
+
+                <div class="col-sm-6 wow fadeInRightBig" data-animation-delay="200">
+                    <h3 class="section-heading">算法简介</h3>
+                    <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet
+                        sit
+                        dolor greand fdanrh sdfs
+                    </div>
+                    <p class="lead">
+                        In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
+                        inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
+                        patria esse cariorem. Quae qui non vident, nihilamane umquam
+                        magnum ac cognitione.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-sm-6 pull-right wow fadeInRightBig">
+                    <img class="img-responsive" draggable="false"
+                         src="{{ url_for("static", filename="front/imgs/doge.png") }}" alt="">
+                </div>
+
+                <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
+                    <h3 class="section-heading">我们的优势</h3>
+                    <p class="lead">A special thanks to Death to the Stock Photo for providing the photographs that you
+                        see
+                        in this template.
+                    </p>
+
+                    <ul class="descp lead2">
+                        <li><i class="fas fa-dice-one"></i> Reliable and Secure Platform</li>
+                        <li><i class="fas fa-dice-two"></i> Everything is perfectly orgainized for future</li>
+                        <li><i class="fas fa-dice-three"></i> Attach large file easily</li>
                     </ul>
                 </div>
             </div>
         </div>
-    </div>
-</footer>
 
-</body>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7">
+                    <h3 class="footer-title"></h3>
+                    <p>
+                        此网站使用 <a href="https://getbootstrap.com">BootStrap </a> , <a href="https://jquery.com/">
+                        jQuery </a>
+                        , <a href="http://demo.cssmoban.com/cssthemes3/gbts_5_FlatfyV2/index.html"> Flatfy </a> 制作 .
+                    </p>
+
+                    <!-- LICENSE -->
+                    <center>CopyRight&copy;2018</center>
+                </div>
+                <!-- /col-xs-7 -->
+
+                <div class="col-md-5">
+                    <div class="footer-banner">
+                        <h3 class="footer-title">完成名单</h3>
+                        <ul>
+                            <li><span>指导老师:</span>王小刚</li>
+                            <li><span>算法设计:</span>李鑫垚</li>
+                            <li><span>UI设计:</span>朱泽霖</li>
+                            <li><span>数据收集:</span>张玉</li>
+                            <li><span>后台框架:</span>顾伟康</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    </body>
 {% endblock %}
 
 {% block end %}

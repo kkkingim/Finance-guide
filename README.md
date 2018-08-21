@@ -1,34 +1,19 @@
-# Finance-guide
-
-## 2018-08-13 19:24:01
-  * 添加cms后台管理, 基本完善
-
-  ---
- ### 待完善功能
-  
-  * 链接 数据推荐
-  * 前台UI
-  
-
+# Finance-Recommand System
 ---
-### 库:
 
-- Flask
-- BeautifulSoup4
-
-### 爬取数据:
+### <del> 1. 爬取数据:(废弃, 采用模拟数据) </del>
   - get_data
     - licai_net.py  京东基金爬取数据
 
+### 2. 数据处理:
+	
+	
 
-### 数据处理:
+### 3. 后台:
+	
+	
 
+### 4. 界面(html/css):
+	
 
-
-### 交互:
-
-
-### 界面(html/css):
-
-  
-
+	

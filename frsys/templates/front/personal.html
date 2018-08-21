@@ -13,26 +13,23 @@
         }
 
         .nav-title {
-            font-size: 30px;
             display: inline-block;
             padding-left: 10%;
-            padding-top: 5px;
 
         }
 
-        .user_grade_item {
-            padding: 20px 20px 0 0;
-        }
-
-        .user_grade {
-            padding-left: 20px;
-            display: block;
-        }
-
-        .add_btn {
+        .add_btn, .add_btn:focus, .btn-toolbar .btn-default, .btn-toolbar .btn-default:focus, .dropdown button, .dropdown button:focus {
+            margin-left: 20px;
             margin-top: 10px;
-            border: none;
-            border-radius: 20%;
+            background-color: #ecf0f1;
+            border-color: #ecf0f1;
+            color: #333;
+        }
+
+        .add_btn:focus, .add_btn:hover, .btn-toolbar .btn-default:focus, .btn-toolbar .btn-default:hover, .dropdown button:hover, .dropdown button:focus {
+            background-color: #ecf0f1;
+            border-color: #ecf0f1;
+            color: #000;
         }
 
         .tips {
@@ -44,8 +41,8 @@
             text-align: center;
         }
 
-        .sel_grade {
-            border-color: #fff;
+        .context {
+            margin-top: 20px;
         }
 
         @media only screen and (max-width: 800px) {
@@ -56,6 +53,7 @@
                 display: none;
             }
         }
+
     </style>
 
     <!-- NavBar-->
@@ -69,8 +67,33 @@
             </div>
 
             <div class="nav-title">
-                <a>个人推荐</a>
+                <ul class="nav navbar-nav">
+                    <li><a style="font-size: 30px;">个人推荐</a></li>
+                    <li>
+                        <div class="dropdown collapse navbar-collapse " style="float: left;margin-left: 20px">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown">
+                                {{ current_type }}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% if current_type != "股票" %}
+                                    <li><a href="{{ url_for("front.personal_view", type = "1") }}">股票</a></li>
+                                {% endif %}
+                                {% if current_type != "债券" %}
+                                    <li><a href="{{ url_for("front.personal_view", type = "2") }}">债券</a></li>
+                                {% endif %}
+                                {% if current_type != "外汇" %}
+                                    <li><a href="{{ url_for("front.personal_view", type = "3") }}">外汇</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                    </li>
+                </ul>
+
             </div>
+
 
             <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
@@ -85,89 +108,97 @@
         </div>
     </nav>
 
-    <div class="user_grade col-md-12 col-sm-12 col-xs-12">
-        {% macro gradelabel(pname, grade, pid, color) %}
-            <div class="user_grade_item col-md-3 col-sm-6 col-xs-6">
-                <div class="alert alert-{{ color }} alert-dismissible fade in">
-                    <button type="button" class="close del_grade" data-dismiss="alert" aria-label="Close"
-                            pid="{{ pid }}"><span
-                            aria-hidden="true">×</span></button>
-                    <strong><span style="display: inline-block;width: 60%;">{{ pname }}:</span></strong><strong
-                        style="float: right;padding-right: 10%"> ( {{ grade }} )</strong>
+    <div class="container context">
+
+
+        <div class="row history-box">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #fff">历史评价</div>
+                <div class="panel-body">
+                    <div class="grade_list" data-currentpage="1">
+                        {% for grades in grade_list %}
+                            <div class="col-md-3">
+                                <ul class="list-group">
+                                    {% for grade in grades %}
+                                        <li class="list-group-item">{{ grade.pid }} : {{ grade.productname }}
+                                            ( {{ grade.grade }} )
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row col-md-12 col-sm-12 col-xs-12">
+                        <div class="btn-toolbar">
+                            <div class="btn-group btn-group-sm col-md-3">
+                                <button type="button" class="btn btn-default history-prev"> <</button>
+                                <button type="button" class="btn btn-default history-next"> ></button>
+                            </div>
+                            <div class="btn-group col-md-2 col-md-offset-7" style="float: right">
+                                <button type="button" class="btn btn-default add_btn" data-toggle="modal"
+                                        data-target="#add_grade_modal"> 添加评分
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        {% endmacro %}
-
-        {% for grade in grades %}
-            {% if loop.index % 4 == 1 %}
-                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "warning") }}
-            {% elif loop.index % 4 == 2 %}
-                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "success") }}
-            {% elif loop.index % 4 == 3 %}
-                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "info") }}
-            {% elif loop.index % 4 == 0 %}
-                {{ gradelabel(grade["productname"], grade["grade"], grade["pid"], "danger") }}
-            {% endif %}
-        {% endfor %}
-
-
-        <div class="user_grade_item col-md-3 col-sm-6 col-xs-6">
-            <button type="button" class="btn btn-success btn-lg add_btn" data-toggle="modal"
-                    data-target="#add_grade_modal"><i class="fas fa-plus-circle"></i></button>
         </div>
         <!-- Button trigger modal -->
-    </div>
 
-    <!-- recommend_list -->
+        <!-- recommend_list -->
 
-    <div class="row col-md-12 col-sm-12 col-xs-12">
-        <div class="tips">
-            <h3>
-                根据您的评分,我们为您推荐以下产品:
-                <br>
-                <!-- 您未评分或者评分产品过少,我们为您推荐下列热门产品 -->
-            </h3>
+        <div class="row col-md-12 col-sm-12 col-xs-12">
+            <div class="tips">
+                <h3>
+                    根据您的评分,我们为您推荐以下产品:
+                    <br>
+                    <!-- 您未评分或者评分产品过少,我们为您推荐下列热门产品 -->
+                </h3>
+            </div>
         </div>
-    </div>
 
 
-    <div id="recommend_list" class="content-section-b" style="border-top: 0">
-        <div class="container">
-            <div class="row">
-                <div class="row wow fadeInDown text-center">
-                    <table id="rec_list" class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>排名</th>
-                            <th>股票代码</th>
-                            <th>股票名称</th>
-                            <th>最新价格</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% macro recproductrow(index, pid, pname, last_p) %}
+        <div id="recommend_list" class="content-section-b" style="border-top: 0">
+            <div class="container">
+                <div class="row">
+                    <div class="row wow fadeInDown text-center">
+                        <table id="rec_list" class="table table-bordered">
+                            <thead>
                             <tr>
-                                <td scope="row">{{ index }}</td>
-                                <td>{{ pid }}</td>
-                                <td><a href="{{ url_for('front.product_detail', id=pid)}} ">{{ pname }}</a></td>
-                                <td>{{ last_p }}</td>
+                                <th>排名</th>
+                                <th>股票代码</th>
+                                <th>股票名称</th>
+                                <th>最新价格</th>
                             </tr>
-                        {% endmacro %}
+                            </thead>
+                            <tbody>
+                            {% macro recproductrow(index, pid, pname, last_p) %}
+                                <tr>
+                                    <td scope="row">{{ index }}</td>
+                                    <td>{{ pid }}</td>
+                                    <td><a href="{{ url_for('front.product_detail', id=pid) }} ">{{ pname }}</a></td>
+                                    <td>{{ last_p }}</td>
+                                </tr>
+                            {% endmacro %}
 
-                        {% for product in products %}
-                            {{ recproductrow(loop.index, product.id, product.name, product.last_price) }}
-                        {% endfor %}
+                            {% for product in products %}
+                                {{ recproductrow(loop.index, product.id, product.name, product.last_price) }}
+                            {% endfor %}
 
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+
+
                 </div>
-
+                <!-- /.row -->
 
             </div>
-            <!-- /.row -->
-
         </div>
+
     </div>
 
 
@@ -190,11 +221,14 @@
                     <div class="container-fluid">
                         <div class="search_box">
                             <input type="text" name="wd" value="">
-                            <button type="button" class="btn btn-primary btn-sm">
+                            <button type="button" class="btn btn-primary btn-sm search_btn">
                                 搜索
                             </button>
+                            <button type="button" class="btn btn-primary btn-sm random_rec" style="float: right">
+                                推荐评分产品
+                            </button>
                         </div>
-                        <div class="search_list">
+                        <div class="search_list" style="margin-top: 10px">
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
@@ -205,7 +239,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td colspan="3">请通过 代码 或 简称 来搜索</td>
+                                    <td colspan="3">"请通过 代码 或 简称 来搜索" 或 "查看推荐产品"</td>
                                 </tr>
                                 </tbody>
 
@@ -229,11 +263,39 @@
                     <button type="button" class="submit_grade btn btn-primary">提交</button>
                 </div>
                 <script>
-                    $(".search_box button").on("click", function () {
+                    $(".search_box button.search_btn").on("click", function () {
                         $.ajax({
                             url: "{{ url_for("front.get_info") }}",
                             type: "post",
                             data: {wd: $(this).prev("input").val()},
+                            success: function (data) {
+                                $list = $(".search_list tbody");
+                                $list.empty();
+                                for (var i in data) {
+                                    $list.append("<tr>\n" +
+                                        "<td>" + data[i][0] + "</td>\n" +
+                                        "<td>" + data[i][1] + "</td>\n" +
+                                        "<td>\n" +
+                                        "<button type=\"button\" pid=\"" + data[i][0] + "\" class=\"sel_grade btn btn-default btn-xs\">选择</button>\n" +
+                                        "</td>\n" +
+                                        "</tr>")
+                                }
+                                $('.sel_grade').on('click', function () {
+                                    $(".search_list .btn-success").removeClass('btn-success').addClass('btn-default');
+                                    $(this).removeClass('btn-default').addClass('btn-success');
+                                });
+                            },
+                            error: function (e) {
+                                alert("错误！！");
+                            }
+                        });
+
+                    });
+                    $(".search_box button.random_rec").on("click", function () {
+                        $.ajax({
+                            url: "{{ url_for("front.random_rec") }}",
+                            type: "post",
+                            data: {},
                             success: function (data) {
                                 $list = $(".search_list tbody");
                                 $list.empty();
@@ -304,6 +366,104 @@
                 }
             });
         });
+        $('.history-prev').on('click', function () {
+            var page = parseInt($(".grade_list").attr("data-currentpage"));
+            if (page > 1) {
+                page = page - 1;
+                $(".grade_list").attr("data-currentpage", page);
+                $.ajax({
+                    url: "{{ url_for("front.get_grade") }}",
+                    type: "post",
+                    data: {
+                        page: page
+                    },
+                    success: function (data) {
+                        data = data['data'];
+                        for (var i in data) {
+                            $(".grade_list").empty();
+                            s = "";
+                            index = 0;
+                            for (var i in data) {
+                                if (index === 0) {
+                                    s += "<div class=\"col-md-3\">\n" +
+                                        "<ul class=\"list-group\">";
+                                }
+                                s += "<li class=\"list-group-item\">" + data[i]['pid'] + " : " + data[i]['productname'] + " ( " + data[i]['grade'] + " )</li>";
+                                t = i + 1;
+                                if (index === 4) {
+                                    s += "</ul></div>";
+                                    index = -1;
+                                }
+
+
+                                index += 1;
+                            }
+                            if (data.length % 5 !== 0) {
+                                s += "</ul></div>";
+                            }
+                            $(".grade_list").append(s);
+                        }
+                    },
+                });
+
+            }
+            else {
+                alert("第一页");
+            }
+
+
+        });
+        $('.history-next').on('click', function () {
+            var page = parseInt($(".grade_list").attr("data-currentpage"));
+
+            page = page + 1;
+
+            $.ajax({
+                url: "{{ url_for("front.get_grade") }}",
+                type: "post",
+                data: {
+                    page: page
+                },
+                success: function (data) {
+                    if (data['page'] === page) {
+                        $(".grade_list").attr("data-currentpage", page);
+                        data = data['data'];
+                        $(".grade_list").empty();
+                        s = "";
+                        index = 0;
+                        for (var i in data) {
+                            if (index === 0) {
+                                s += "<div class=\"col-md-3\">\n" +
+                                    "<ul class=\"list-group\">";
+                            }
+                            s += "<li class=\"list-group-item\">" + data[i]['pid'] + " : " + data[i]['productname'] + " ( " + data[i]['grade'] + " )</li>";
+                            t = i + 1;
+                            if (index === 4) {
+                                s += "</ul></div>";
+                                index = -1;
+                            }
+
+
+                            index += 1;
+                        }
+                        if (data.length % 5 !== 0) {
+                            s += "</ul></div>";
+                        }
+                        $(".grade_list").append(s);
+                    }
+                    else {
+                        alert("最后一页");
+                    }
+                },
+            });
+
+
+        });
+
+        $('#myTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        })
     </script>
 
 {% endblock %}
