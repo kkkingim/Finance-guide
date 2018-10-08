@@ -16,7 +16,7 @@
         }
 
         body {
-            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei";
         }
 
         .subtitle2 {
@@ -129,7 +129,8 @@
 
             <div class="col-md-6 col-md-offset-3 text-center wrap_title">
                 <h3>热门金融产品</h3>
-                <p class="lead" style="margin-top:0"> " <strong> 股票 </strong> , <strong> 债券 </strong> , <strong> 外汇 </strong> " 中各自十大用户最热产品</p>
+                <p class="lead" style="margin-top:0"> " <strong> 股票 </strong> , <strong> 债券 </strong> , <strong>
+                    外汇 </strong> " 中各自十大用户最热产品</p>
 
             </div>
             <div class="row">
@@ -151,7 +152,8 @@
                                         <td scope="row">{{ loop.index }}</td>
                                         <td>{{ product.id }}</td>
                                         <td>
-                                            <a href="{{ url_for("front.product_detail", id=product.id) }}">{{ product.name }}</a>
+                                            <a href="{{ url_for("front.product_detail", id=product.id) }}"
+                                               target="_blank">{{ product.name }}</a>
                                         </td>
                                         <td>{{ product.last_price }}</td>
                                     </tr>
@@ -175,7 +177,8 @@
                                         <td scope="row">{{ loop.index }}</td>
                                         <td>{{ product.id }}</td>
                                         <td>
-                                            <a href="{{ url_for("front.product_detail", id=product.id) }}">{{ product.name }}</a>
+                                            <a href="{{ url_for("front.product_detail", id=product.id) }}"
+                                               target="_blank">{{ product.name }}</a>
                                         </td>
                                         <td>{{ product.last_price }}</td>
                                     </tr>
@@ -199,7 +202,8 @@
                                         <td scope="row">{{ loop.index }}</td>
                                         <td>{{ product.symbol }}</td>
                                         <td>
-                                            <a href="{{ url_for("front.product_detail", id=product.symbol) }}">{{ product.name }}</a>
+                                            <a href="{{ url_for("front.product_detail", id=product.symbol) }}"
+                                               target="_blank">{{ product.name }}</a>
                                         </td>
                                         <td>{{ product.last_price }}</td>
                                     </tr>
@@ -227,20 +231,18 @@
 
                 <div class="col-sm-6 pull-right wow fadeInRightBig">
                     <img class="img-responsive" draggable="false"
-                         src="{{ url_for("static", filename="front/imgs/ipad.png") }}" alt="">
+                         style="width: 500px;height: 400px;"
+                         src="{{ url_for("static", filename="front/imgs/rec.jpg") }}" alt="">
                 </div>
 
                 <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
                     <h3 class="section-heading">金融推荐</h3>
-                    <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet
-                        sit
-                        dolor greand fdanrh sdfs
+                    <div class="sub-title lead3">尽管存在着无数的未知，金融推荐不会止步
                     </div>
                     <p class="lead">
-                        In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
-                        inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
-                        patria esse cariorem. Quae qui non vident, nihilamane umquam
-                        magnum ac cognitione.
+                        就像历史反复证明的那样，尽管有过无数的股灾，人们依然进入这个市场，
+                        参与到这个伟大的博弈中去，也正是通过这个生生不息的伟大博弈，人类在不断创造着更加美好的明天，
+                        但是,你可以通过我们的金融推荐，降低风险，提高收益。
                     </p>
                 </div>
             </div>
@@ -253,21 +255,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-6 wow fadeInLeftBig">
-                                <img class="img-responsive img-rounded"
-                                     src="{{ url_for("static", filename="front/imgs/iphone.png") }}" alt=""  draggable="false">
+                    <img class="img-responsive img-rounded " style="width: 500px;height: 400px;"
+                         src="{{ url_for("static", filename="front/imgs/sf.jpg") }}" alt="" draggable="false">
                 </div>
 
                 <div class="col-sm-6 wow fadeInRightBig" data-animation-delay="200">
                     <h3 class="section-heading">算法简介</h3>
-                    <div class="sub-title lead3">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br> sdfs sit atmet
-                        sit
-                        dolor greand fdanrh sdfs
+                    <div class="sub-title lead3">
+                        协同过滤是利用集体智慧的一个典型方法。
                     </div>
                     <p class="lead">
-                        In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam
-                        inchoavit, nihil ampliusuma. Scien tiam pollicentur, uam non erat mirum sapientiae lorem cupido
-                        patria esse cariorem. Quae qui non vident, nihilamane umquam
-                        magnum ac cognitione.
+                        要理解什么是协同过滤 (Collaborative Filtering, 简称 CF)，
+                        首先想一个简单的问题，如果你现在想看个电影，但你不知道具体看哪部，你会怎么做？大部分的人会问问周围的朋友，
+                        看看最近有什么好看的电影推荐，而我们一般更倾向于从口味比较类似的朋友那里得到推荐。这就是协同过滤的核心思想。
                     </p>
 
                 </div>
@@ -283,20 +283,22 @@
 
                 <div class="col-sm-6 pull-right wow fadeInRightBig">
                     <img class="img-responsive" draggable="false"
-                         src="{{ url_for("static", filename="front/imgs/doge.png") }}" alt="">
+                         style="width: 500px;height: 500px;"
+                         src="{{ url_for("static", filename="front/imgs/ys.jpg") }}" alt="">
                 </div>
 
                 <div class="col-sm-6 wow fadeInLeftBig" data-animation-delay="200">
                     <h3 class="section-heading">我们的优势</h3>
-                    <p class="lead">A special thanks to Death to the Stock Photo for providing the photographs that you
-                        see
-                        in this template.
+                    <p class="lead">我们的系统根据协同过滤的算法进行用户推荐，并拥有大量的用户信息作为基础推荐，
+                        帮您推荐出最适合、最实时的金融产品，这将是属于您独一无二的金融推荐，
+                        也将是您最理想的金融推荐。选择我们，选择属于您独一无二的金融未来。
+
                     </p>
 
                     <ul class="descp lead2">
-                        <li><i class="fas fa-dice-one"></i> Reliable and Secure Platform</li>
-                        <li><i class="fas fa-dice-two"></i> Everything is perfectly orgainized for future</li>
-                        <li><i class="fas fa-dice-three"></i> Attach large file easily</li>
+                        <li><i class="fas fa-dice-one"></i> 用户数据量大</li>
+                        <li><i class="fas fa-dice-two"></i> 推荐精确,实时</li>
+                        <li><i class="fas fa-dice-three"></i> 智能推荐评分系统</li>
                     </ul>
                 </div>
             </div>
@@ -315,9 +317,10 @@
                         jQuery </a>
                         , <a href="http://demo.cssmoban.com/cssthemes3/gbts_5_FlatfyV2/index.html"> Flatfy </a> 制作 .
                     </p>
+                    <div style="height: 80px;"></div>
 
                     <!-- LICENSE -->
-                    <center>CopyRight&copy;2018</center>
+                    <div align="center">CopyRight&copy;2018</div>
                 </div>
                 <!-- /col-xs-7 -->
 

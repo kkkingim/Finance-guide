@@ -1,12 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html style="height: 100%">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <title>产品详情 - {{ product.name }}</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        body{
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei";
+        }
+    </style>
+    <link href="{{ url_for("static", filename="front/css/bootstrap.min.css") }}" rel="stylesheet">
 </head>
-<body>
-<h1>{{ pid }}</h1>
+<body style="height: 80%; margin: auto">
+<script src="{{ url_for("static", filename="front/js/jquery-1.10.2.js") }}"></script>
+<script src="{{ url_for("static", filename="front/js/bootstrap.min.js") }}"></script>
 
 
+<div id="container" style="height: 100%"></div>
+<script type="text/javascript" src="{{ url_for("static", filename="front/js/echarts.js") }}"></script>
+
+
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    option = {
+        backgroundColor: '#2c343c',
+
+        title: {
+            text: '产品评分详细信息',
+            left: 'center',
+            top: 20,
+            textStyle: {
+                color: '#ccc'
+            }
+        },
+
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+
+        visualMap: {
+            show: false,
+            min: 1,
+            max: 10,
+            inRange: {
+                colorLightness: [0, 1]
+            }
+        },
+        series: [
+            {
+                name: '评分',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '50%'],
+                data: [
+                    {value: {{ grades[0] }}, name: '评分1'},
+                    {value: {{ grades[1] }}, name: '评分2'},
+                    {value: {{ grades[2] }}, name: '评分3'},
+                    {value: {{ grades[3] }}, name: '评分4'},
+                    {value: {{ grades[4] }}, name: '评分5'}
+                ].sort(function (a, b) {
+                    return a.value - b.value;
+                }),
+                roseType: 'radius',
+                label: {
+                    normal: {
+                        textStyle: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.3)'
+                        },
+                        smooth: 0.2,
+                        length: 10,
+                        length2: 20
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#c23531',
+                        shadowBlur: 200,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+
+                animationType: 'scale',
+                animationEasing: 'elasticOut',
+                animationDelay: function (idx) {
+                    return Math.random() * 200;
+                }
+            }
+        ]
+    };
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+</script>
+<div id="products_list" style="border-top: 0">
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                {% for p in pp %}
+                    <td>{{ p.prop }}</td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% if t == 0 %}
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.amount }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.last_price }}</td>
+                    <td>{{ product.PE_ratio }}</td>
+                    <td>{{ product.total_increase }}</td>
+                {% elif t == 1 %}
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.last_price }}</td>
+                    <td>{{ product.change }}</td>
+                    <td>{{ product.chg }}</td>
+                    <td>{{ product.open }}</td>
+                    <td>{{ product.hightest }}</td>
+                    <td>{{ product.lowest }}</td>
+                    <td>{{ product.pre_close }}</td>
+                    <td>{{ product.volume }}</td>
+                    <td>{{ product.turnover }}</td>
+                {% else %}
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.symbol }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.last_price }}</td>
+                    <td>{{ product.change }}</td>
+                    <td>{{ product.chg }}</td>
+                    <td>{{ product.highest }}</td>
+                    <td>{{ product.lowest }}</td>
+                {% endif %}
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {% extends "front/base.html" %}
 
 {% block title %}
-    全部产品
+    每日推荐
 {% endblock %}
 
 {% block body %}
@@ -86,7 +86,7 @@
             </div>
 
             <div class="nav-title">
-                <a>全部产品</a>
+                <a>每日推荐</a>
             </div>
 
             <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
@@ -102,9 +102,7 @@
     </nav>
     <div id="products_list" style="border-top: 0">
         <div class="container">
-            <div class="row">
-                <div class="row wow fadeInDown text-center">
-                    <table id="rec_list" class="table table-bordered">
+                                <table id="rec_list" class="table table-bordered">
                         <thead>
                         <tr>
                             {% for p in pp %}
@@ -154,78 +152,6 @@
 
                         </tbody>
                     </table>
-
-                    <div class="filter_box">
-                        <form>
-                            <input class="form-control" type="text" name="wd" value="{{ wd }}">
-                            <input type="hidden" name="type" value="{{ tp }}">
-                            <input style="float: left;" class="btn btn-filter btn-sm" type="submit" value="过滤">
-                        </form>
-                    </div>
-                    <div class="page_footer">
-                        <nav>
-                            <ul class="pagination">
-
-                                {% macro gen_page_footer(url) %}
-                                    {% set enda = "" %}
-                                    {% if wd %}
-                                        {% set enda = "&wd={}".format(wd) %}
-                                    {% endif %}
-                                    <li class="page-item">
-                                        {% if current_page == 1 %}
-                                            <a id="page_disable" class="page-link"><span>&laquo;</span></a>
-                                        {% else %}
-                                            <a class="page-link"
-                                               href="{{ url_for(url, page= current_page - 1,type=tp )  + enda }}"><span>&laquo;</span></a>
-                                        {% endif %}
-                                    </li>
-
-
-                                    {% if current_page < 3 or last_page <= 5 %}
-                                        {% set list = [1,2,3,4,5] %}
-                                    {% elif current_page > last_page - 2 %}
-                                        {% set list = range(last_page - 4, last_page + 1) %}
-                                    {% else %}
-                                        {% set list = range(current_page - 2, current_page + 3) %}
-                                    {% endif %}
-
-
-                                    {% for p in list %}
-                                        {% if p == current_page or p > last_page %}
-                                            <li class="page-item"><a id="page_disable"
-                                                                     class="page-link">{{ p }}</a></li>
-                                        {% else %}
-                                            <li class="page-item"><a class="page-link"
-                                                                     href="{{ url_for(url, page= p, type=tp )  + enda }}">{{ p }}</a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-
-
-
-
-                                    <li class="page-item">
-                                        {% if current_page == last_page %}
-                                            <a id="page_disable" class="page-link"><span>&raquo;</span></a>
-                                        {% else %}
-                                            <a class="page-link"
-                                               href="{{ url_for(url, page= current_page + 1, type=tp )  + enda }}"><span>&raquo;</span></a>
-                                        {% endif %}
-
-                                    </li>
-                                {% endmacro %}
-                                {{ gen_page_footer("front.products_view") }}
-
-
-                            </ul>
-                        </nav>
-                    </div>
-
-                </div>
-
-
-            </div>
-            <!-- /.row -->
         </div>
     </div>
     </body>

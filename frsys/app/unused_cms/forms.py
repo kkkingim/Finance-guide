@@ -1,4 +1,4 @@
-from apps.forms import BaseForm
+from app.common.forms import BaseForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import Length, Email, input_required, EqualTo
 

@@ -9,7 +9,7 @@
     <body>
     <style type="text/css">
         body {
-            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei";
         }
 
         .nav-title {
@@ -97,8 +97,23 @@
 
             <div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
+                    {% if current_type == "股票" %}
+                        <li class="menuItem"><a href="{{ url_for("front.dailyrec_view", type = "1") }}">每日推荐</a></li>
+                    {% elif current_type == "债券" %}
+                        <li class="menuItem"><a href="{{ url_for("front.dailyrec_view", type = "2") }}">每日推荐</a></li>
+                    {% else %}
+                        <li class="menuItem"><a href="{{ url_for("front.dailyrec_view", type = "3") }}">每日推荐</a></li>
+                    {% endif %}
 
-                    <li class="menuItem"><a href="{{ url_for("front.products_view") }}">全部产品</a></li>
+
+                    {% if current_type == "股票" %}
+                        <li class="menuItem"><a href="{{ url_for("front.products_view", type = "1") }}">全部产品</a></li>
+                    {% elif current_type == "债券" %}
+                        <li class="menuItem"><a href="{{ url_for("front.products_view", type = "2") }}">全部产品</a></li>
+                    {% else %}
+                        <li class="menuItem"><a href="{{ url_for("front.products_view", type = "3") }}">全部产品</a></li>
+                    {% endif %}
+
                     <li id="sp"><a>|</a></li>
                     <li class="menuItem"><a href="" style="font-size:20px">{{ g.current_user.username }}</a></li>
                     <li class="menuItem"><a href="{{ url_for('front.logout') }}" style="font-size:14px">注销</a></li>
@@ -165,30 +180,68 @@
                 <div class="row">
                     <div class="row wow fadeInDown text-center">
                         <table id="rec_list" class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>排名</th>
-                                <th>股票代码</th>
-                                <th>股票名称</th>
-                                <th>最新价格</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% macro recproductrow(index, pid, pname, last_p) %}
+                            {% if current_type == '债券' %}
+                                <thead>
                                 <tr>
-                                    <td scope="row">{{ index }}</td>
-                                    <td>{{ pid }}</td>
-                                    <td><a href="{{ url_for('front.product_detail', id=pid) }} ">{{ pname }}</a></td>
-                                    <td>{{ last_p }}</td>
+                                    <th>排名</th>
+                                    <th>债券代码</th>
+                                    <th>债券名称</th>
+                                    <th>最新价格</th>
                                 </tr>
-                            {% endmacro %}
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.id }}</td>
+                                        <td><a href="{{ url_for('front.product_detail', id=product.id) }}"
+                                               target="_blank">{{ product.name }}</a></td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            {% elif current_type == '外汇' %}
+                                <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>外汇代码</th>
+                                    <th>外汇名称</th>
+                                    <th>最新价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.symbol }}</td>
+                                        <td><a href="{{ url_for('front.product_detail', id=product.symbol) }}"
+                                               target="_blank">{{ product.name }}</a></td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            {% else %}
+                                <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>股票代码</th>
+                                    <th>股票名称</th>
+                                    <th>最新价格</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td scope="row">{{ loop.index }}</td>
+                                        <td>{{ product.id }}</td>
+                                        <td><a href="{{ url_for('front.product_detail', id=product.id) }}"
+                                               target="_blank">{{ product.name }}</a></td>
+                                        <td>{{ product.last_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            {% endif %}
 
-                            {% for product in products %}
-                                {{ recproductrow(loop.index, product.id, product.name, product.last_price) }}
-                            {% endfor %}
-
-
-                            </tbody>
                         </table>
                     </div>
 
@@ -225,7 +278,7 @@
                                 搜索
                             </button>
                             <button type="button" class="btn btn-primary btn-sm random_rec" style="float: right">
-                                推荐评分产品
+                                随机推荐
                             </button>
                         </div>
                         <div class="search_list" style="margin-top: 10px">
@@ -239,7 +292,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td colspan="3">"请通过 代码 或 简称 来搜索" 或 "查看推荐产品"</td>
+                                    <td colspan="3">"请通过 代码 或 简称 来搜索" 或 "点击随机推荐"</td>
                                 </tr>
                                 </tbody>
 
@@ -267,7 +320,10 @@
                         $.ajax({
                             url: "{{ url_for("front.get_info") }}",
                             type: "post",
-                            data: {wd: $(this).prev("input").val()},
+                            data: {
+                                wd: $(this).prev("input").val(),
+                                tp: '{{ current_type }}'
+                            },
                             success: function (data) {
                                 $list = $(".search_list tbody");
                                 $list.empty();
@@ -295,7 +351,7 @@
                         $.ajax({
                             url: "{{ url_for("front.random_rec") }}",
                             type: "post",
-                            data: {},
+                            data: {tp: '{{ current_type }}'},
                             success: function (data) {
                                 $list = $(".search_list tbody");
                                 $list.empty();
@@ -328,7 +384,8 @@
                                 type: "post",
                                 data: {
                                     pid: $pid,
-                                    grade: $grade
+                                    grade: $grade,
+                                    tp: '{{ current_type }}'
                                 },
                                 success: function (data) {
                                     alert("评分成功");

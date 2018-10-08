@@ -1,16 +1,16 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for, g, jsonify
+from flask import Blueprint, render_template, request, session, redirect, url_for, jsonify
 from .decorators import login_required
 from flask.views import MethodView
 from .forms import cms_login_form, update_info_form, cms_user_add_form
 from .models import CmsUser, db
-from apps.front.models import FrontUser
-from apps.models import Product, Grade
-from apps.front.forms import RegForm
+from app.front.models import FrontUser
+from app.common.models import Product, Grade
+from app.front.forms import RegForm
 import config
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
-from threading import Thread
+
 # from utils import rd
 
 bp = Blueprint("cms", __name__, url_prefix="/cms")

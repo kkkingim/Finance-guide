@@ -1,6 +1,6 @@
 from wtforms import StringField, PasswordField
 from wtforms.validators import Length, EqualTo, Email, input_required
-from apps.forms import BaseForm
+from app.common.forms import BaseForm
 
 class RegForm(BaseForm):
     username = StringField(validators=[Length(min=6, max=16, message="用户名长度应为6-16位")])

@@ -10,3 +10,4 @@ def login_required(func):
         else:
             return redirect(url_for('front.login', next = request.path))
     return inner
+

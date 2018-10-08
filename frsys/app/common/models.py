@@ -33,6 +33,7 @@ class Product_2(db.Model):
     lowest = db.Column(db.DECIMAL(10, 4), nullable=False)
 
 
+
 class Grade(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     uid = db.Column(db.String(255), nullable=False)
@@ -50,6 +51,7 @@ class Grade_2(db.Model):
     uid = db.Column(db.String(255), nullable=False)
     pid = db.Column(db.String(255), nullable=False)
     grade = db.Column(db.Integer, nullable=False)
+
 
 
 class Product_prop(db.Model):

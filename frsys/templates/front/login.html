@@ -11,7 +11,7 @@
             background-size: cover;
             padding-top: 40px;
             padding-bottom: 40px;
-            font-family: "STKaiti", "Microsoft YaHei", "MicrosoftJhengHei";
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei";
         }
 
         .form-signin {
@@ -89,10 +89,10 @@
                     <input type="checkbox" name="rememberme" value="remember-me"> 记住我
                 </label>
             </div>
-            <input class="btn btn-lg btn-default btn-block mybutton_standard" type="submit" value="登录" />
+            <input class="btn btn-lg btn-default btn-block mybutton_standard" type="submit" value="登录"/>
             <a style="color: white;float: right;margin-top:5px;" href="{{ url_for("front.reg") }}">前往注册</a>
             {% if message %}
-                <a style="color: #ff5358;margin-top:5px;"> {{ message }}</a>
+                <a style="color: #ff5358;margin-top:5px;"> {{ message|safe }}</a>
             {% endif %}
         </form>
     </div>
