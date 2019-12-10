@@ -19,5 +19,4 @@ application.register_blueprint(common_bp)
 
 
 if __name__ == "__main__":
-
     application.run()
